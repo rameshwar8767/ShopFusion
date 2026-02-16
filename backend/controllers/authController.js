@@ -1,17 +1,20 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
+// controllers/authController.js
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const { validationResult } = require("express-validator");
 
 // Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
+    expiresIn: process.env.JWT_EXPIRE || "7d",
   });
 };
 
-// @desc    Register user
+// ========================================================
+// @desc    Register Retailer
 // @route   POST /api/auth/register
 // @access  Public
+// ========================================================
 exports.register = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -22,23 +25,25 @@ exports.register = async (req, res, next) => {
       });
     }
 
-    const { name, email, password, role } = req.body;
+    let { name, email, password } = req.body;
 
-    // Check if user exists
-    const userExists = await User.findOne({ email });
-    if (userExists) {
+    email = email.toLowerCase().trim();
+
+    // Check existing user
+    const exists = await User.findOne({ email });
+    if (exists) {
       return res.status(400).json({
         success: false,
-        message: 'User already exists',
+        message: "User already exists with this email",
       });
     }
 
-    // Create user
+    // Always create retailer by default
     const user = await User.create({
-      name,
+      name: name.trim(),
       email,
       password,
-      role: role || 'retailer',
+      role: "retailer",
     });
 
     res.status(201).json({
@@ -56,36 +61,37 @@ exports.register = async (req, res, next) => {
   }
 };
 
-// @desc    Login user
+// ========================================================
+// @desc    Login User
 // @route   POST /api/auth/login
 // @access  Public
+// ========================================================
 exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
 
-    // Validate email & password
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide an email and password',
+        message: "Email and password are required",
       });
     }
 
-    // Check for user
-    const user = await User.findOne({ email }).select('+password');
+    email = email.toLowerCase().trim();
+
+    const user = await User.findOne({ email }).select("+password");
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       });
     }
 
-    // Check if password matches
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
+    const match = await user.matchPassword(password);
+    if (!match) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials',
+        message: "Invalid credentials",
       });
     }
 
@@ -104,12 +110,14 @@ exports.login = async (req, res, next) => {
   }
 };
 
-// @desc    Get current logged in user
+// ========================================================
+// @desc    Get Logged-in User Info
 // @route   GET /api/auth/me
 // @access  Private
+// ========================================================
 exports.getMe = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select("-password");
 
     res.status(200).json({
       success: true,
@@ -120,46 +128,73 @@ exports.getMe = async (req, res, next) => {
   }
 };
 
-// @desc    Update user details
+// ========================================================
+// @desc    Update User Details
 // @route   PUT /api/auth/updatedetails
 // @access  Private
+// ========================================================
 exports.updateDetails = async (req, res, next) => {
   try {
-    const fieldsToUpdate = {
-      name: req.body.name,
-      email: req.body.email,
-    };
+    const newData = {};
 
-    const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
-      new: true,
-      runValidators: true,
-    });
+    if (req.body.name) newData.name = req.body.name.trim();
+    if (req.body.email) newData.email = req.body.email.toLowerCase().trim();
+
+    if (newData.email) {
+      const existing = await User.findOne({
+        email: newData.email,
+        _id: { $ne: req.user.id },
+      });
+
+      if (existing) {
+        return res.status(400).json({
+          success: false,
+          message: "Email already taken",
+        });
+      }
+    }
+
+    const updated = await User.findByIdAndUpdate(
+      req.user.id,
+      newData,
+      { new: true, runValidators: true }
+    ).select("-password");
 
     res.status(200).json({
       success: true,
-      data: user,
+      data: updated,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Update password
+// ========================================================
+// @desc    Update Password
 // @route   PUT /api/auth/updatepassword
 // @access  Private
+// ========================================================
 exports.updatePassword = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).select('+password');
+    const { currentPassword, newPassword } = req.body;
 
-    // Check current password
-    if (!(await user.matchPassword(req.body.currentPassword))) {
-      return res.status(401).json({
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
         success: false,
-        message: 'Password is incorrect',
+        message: "Current and new password are required",
       });
     }
 
-    user.password = req.body.newPassword;
+    const user = await User.findById(req.user.id).select("+password");
+
+    if (!(await user.matchPassword(currentPassword))) {
+      return res.status(401).json({
+        success: false,
+        message: "Current password is incorrect",
+      });
+    }
+
+    user.password = newPassword;
     await user.save();
 
     res.status(200).json({
@@ -171,4 +206,31 @@ exports.updatePassword = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+exports.updateProfile = async (req, res) => {
+  const { name, email } = req.body;
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.name = name || user.name;
+  user.email = email || user.email;
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    data: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: req.user.token, // keep same token
+      createdAt: user.createdAt,
+    },
+  });
 };

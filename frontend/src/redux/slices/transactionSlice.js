@@ -1,14 +1,106 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../services/api';
+// redux/slices/transactionSlice.js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../../services/api";
 
+// ================= GET TRANSACTIONS =================
+export const getTransactions = createAsyncThunk(
+  "transactions/get",
+  async ({ page = 1, limit = 20, search = "" } = {}, thunkAPI) => {
+    try {
+      const res = await api.get("/transactions", {
+        params: { page, limit, search },
+      });
+      // controller: { success, data: transactions, pagination }
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch transactions"
+      );
+    }
+  }
+);
+
+// ================= GET STATS =================
+export const getTransactionStats = createAsyncThunk(
+  "transactions/getStats",
+  async (_, thunkAPI) => {
+    try {
+      const res = await api.get("/transactions/stats");
+      // controller: { success, data: { overview, revenueByDate, topProducts } }
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Failed to fetch stats"
+      );
+    }
+  }
+);
+
+// ================= CREATE TRANSACTION =================
+export const createTransaction = createAsyncThunk(
+  "transactions/create",
+  async (data, thunkAPI) => {
+    try {
+      const res = await api.post("/transactions", data);
+      // { success, data: transaction }
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Transaction creation failed"
+      );
+    }
+  }
+);
+
+// ================= BULK UPLOAD =================
+export const bulkUploadTransactions = createAsyncThunk(
+  "transactions/bulkUpload",
+  async (transactions, thunkAPI) => {
+    try {
+      const res = await api.post("/transactions/bulk", { transactions });
+      // { success, count, data: inserted[] } or 207
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Bulk upload failed"
+      );
+    }
+  }
+);
+
+// ================= DELETE =================
+export const deleteTransaction = createAsyncThunk(
+  "transactions/delete",
+  async (id, thunkAPI) => {
+    try {
+      await api.delete(`/transactions/${id}`);
+      return id;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Delete failed"
+      );
+    }
+  }
+);
+
+// ================= INITIAL STATE =================
 const initialState = {
   transactions: [],
   transaction: null,
-  stats: null,
+  stats: {
+    overview: {
+      totalRevenue: 0,
+      totalTransactions: 0,
+      uniqueCustomers: 0,
+      averageTransactionValue: 0,
+    },
+    revenueByDate: [],
+    topProducts: [],
+  },
   isLoading: false,
   isError: false,
   isSuccess: false,
-  message: '',
+  message: "",
   pagination: {
     page: 1,
     pages: 1,
@@ -16,119 +108,72 @@ const initialState = {
   },
 };
 
-// Get all transactions
-export const getTransactions = createAsyncThunk(
-  'transactions/getAll',
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.get('/transactions', { params });
-      return response.data;
-    } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-// Get transaction stats
-export const getTransactionStats = createAsyncThunk(
-  'transactions/getStats',
-  async (_, thunkAPI) => {
-    try {
-      const response = await api.get('/transactions/stats');
-      return response.data;
-    } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-// Create transaction
-export const createTransaction = createAsyncThunk(
-  'transactions/create',
-  async (transactionData, thunkAPI) => {
-    try {
-      const response = await api.post('/transactions', transactionData);
-      return response.data;
-    } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-// Bulk upload transactions
-export const bulkUploadTransactions = createAsyncThunk(
-  'transactions/bulkUpload',
-  async (transactions, thunkAPI) => {
-    try {
-      const response = await api.post('/transactions/bulk', { transactions });
-      return response.data;
-    } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-// Delete transaction
-export const deleteTransaction = createAsyncThunk(
-  'transactions/delete',
-  async (id, thunkAPI) => {
-    try {
-      await api.delete(`/transactions/${id}`);
-      return id;
-    } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
-    }
-  }
-);
-
-export const transactionSlice = createSlice({
-  name: 'transactions',
+// ================= SLICE =================
+const transactionSlice = createSlice({
+  name: "transactions",
   initialState,
   reducers: {
     reset: (state) => {
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
-      state.message = '';
+      state.message = "";
     },
   },
   extraReducers: (builder) => {
     builder
+      // ---------- GET TRANSACTIONS ----------
       .addCase(getTransactions.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
       })
       .addCase(getTransactions.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.transactions = action.payload.data;
-        state.pagination = {
-          page: action.payload.page,
-          pages: action.payload.pages,
-          total: action.payload.total,
-        };
+        state.transactions =
+          action.payload.data || action.payload.transactions || [];
+        state.pagination = action.payload.pagination || state.pagination;
       })
       .addCase(getTransactions.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
+
+      // ---------- STATS ----------
+      .addCase(getTransactionStats.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(getTransactionStats.fulfilled, (state, action) => {
-        state.stats = action.payload.data;
+        state.isLoading = false;
+        // expect { success, data: { overview, revenueByDate, topProducts } }
+        state.stats = action.payload?.data || action.payload || initialState.stats;
+      })
+      .addCase(getTransactionStats.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+
+      // ---------- CREATE ----------
+      .addCase(createTransaction.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(createTransaction.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.isSuccess = true;
-        state.transactions.unshift(action.payload.data);
+        if (action.payload?.data) {
+          state.transactions.unshift(action.payload.data);
+          state.pagination.total += 1;
+        }
       })
+      .addCase(createTransaction.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+
+      // ---------- BULK UPLOAD ----------
       .addCase(bulkUploadTransactions.pending, (state) => {
         state.isLoading = true;
       })
@@ -141,10 +186,17 @@ export const transactionSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
+
+      // ---------- DELETE ----------
       .addCase(deleteTransaction.fulfilled, (state, action) => {
         state.transactions = state.transactions.filter(
-          (transaction) => transaction._id !== action.payload
+          (t) => t._id !== action.payload
         );
+        state.pagination.total = Math.max(0, state.pagination.total - 1);
+      })
+      .addCase(deleteTransaction.rejected, (state, action) => {
+        state.isError = true;
+        state.message = action.payload;
       });
   },
 });

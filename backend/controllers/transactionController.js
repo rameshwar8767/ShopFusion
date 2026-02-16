@@ -1,68 +1,55 @@
-const Transaction = require('../models/Transaction');
-const Product = require('../models/Product');
-const { validationResult } = require('express-validator');
-
-// @desc    Get all transactions
-// @route   GET /api/transactions
-// @access  Private
+// controllers/transactionController.js
+const Transaction = require("../models/Transaction");
+const Product = require("../models/Product");
+const { validationResult } = require("express-validator");
+const mongoose = require('mongoose')
+// ✅ Retailer-scoped, searchable list
 exports.getTransactions = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 50;
-    const skip = (page - 1) * limit;
+    const { page = 1, limit = 20, search = "" } = req.query;
 
-    const query = { userId: req.user.id };
+    const query = { user: req.user.id }; // 🔐 scope to retailer
 
-    // Date filtering
-    if (req.query.startDate || req.query.endDate) {
-      query.timestamp = {};
-      if (req.query.startDate) {
-        query.timestamp.$gte = new Date(req.query.startDate);
-      }
-      if (req.query.endDate) {
-        query.timestamp.$lte = new Date(req.query.endDate);
-      }
+    if (search) {
+      const keyword = search.trim();
+      query.$or = [
+        { transactionId: { $regex: keyword, $options: "i" } },
+        { shopperId: { $regex: keyword, $options: "i" } }, // was customerId
+      ];
     }
-
-    // Customer filtering
-    if (req.query.customerId) {
-      query.customerId = req.query.customerId;
-    }
-
-    const transactions = await Transaction.find(query)
-      .sort({ timestamp: -1 })
-      .skip(skip)
-      .limit(limit);
 
     const total = await Transaction.countDocuments(query);
 
-    res.status(200).json({
+    const transactions = await Transaction.find(query)
+      .sort({ timestamp: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    res.json({
       success: true,
-      count: transactions.length,
-      total,
-      page,
-      pages: Math.ceil(total / limit),
       data: transactions,
+      pagination: {
+        total,
+        page: Number(page),
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Get single transaction
-// @route   GET /api/transactions/:id
-// @access  Private
 exports.getTransaction = async (req, res, next) => {
   try {
     const transaction = await Transaction.findOne({
       _id: req.params.id,
-      userId: req.user.id,
+      user: req.user.id, // 🔄 was userId
     });
 
     if (!transaction) {
       return res.status(404).json({
         success: false,
-        message: 'Transaction not found',
+        message: "Transaction not found",
       });
     }
 
@@ -75,25 +62,35 @@ exports.getTransaction = async (req, res, next) => {
   }
 };
 
-// @desc    Create new transaction
-// @route   POST /api/transactions
-// @access  Private
 exports.createTransaction = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        errors: errors.array(),
-      });
+      return res
+        .status(400)
+        .json({ success: false, errors: errors.array() });
     }
 
-    // Add user to req.body
-    req.body.userId = req.user.id;
+    req.body.user = req.user.id; // 🔄 was userId
 
-    // Generate transaction ID if not provided
     if (!req.body.transactionId) {
-      req.body.transactionId = `TXN${Date.now()}${Math.random().toString(36).substr(2, 9)}`;
+      req.body.transactionId = `TXN-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 6)}`;
+    }
+
+    // Attach productRef + productName + price
+    for (const item of req.body.items) {
+      const product = await Product.findOne({
+        productId: item.productId,
+        user: req.user.id,
+      });
+
+      if (product) {
+        item.productRef = product._id;
+        item.productName = product.name;
+        item.price = product.price;
+      }
     }
 
     const transaction = await Transaction.create(req.body);
@@ -107,150 +104,149 @@ exports.createTransaction = async (req, res, next) => {
   }
 };
 
-// @desc    Bulk upload transactions
-// @route   POST /api/transactions/bulk
-// @access  Private
+// controllers/transactionController.js
 exports.bulkUploadTransactions = async (req, res, next) => {
   try {
     const { transactions } = req.body;
+    const userId = req.user.id;
 
-    if (!Array.isArray(transactions) || transactions.length === 0) {
+    if (!Array.isArray(transactions) || !transactions.length) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide an array of transactions',
+        message: "Please provide a valid transactions array",
       });
     }
 
-    // Add userId to all transactions
-    const transactionsWithUser = transactions.map(transaction => ({
-      ...transaction,
-      userId: req.user.id,
-      transactionId: transaction.transactionId || `TXN${Date.now()}${Math.random().toString(36).substr(2, 9)}`,
+    const withUser = transactions.map((t) => ({
+      ...t,
+      user: userId,
+      transactionId:
+        t.transactionId ||
+        `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
     }));
 
-    const insertedTransactions = await Transaction.insertMany(transactionsWithUser, {
-      ordered: false, // Continue on error
+    const inserted = await Transaction.insertMany(withUser, {
+      ordered: false,
     });
 
     res.status(201).json({
       success: true,
-      count: insertedTransactions.length,
-      data: insertedTransactions,
+      count: inserted.length,
+      data: inserted,
     });
   } catch (error) {
-    // Handle duplicate key errors
     if (error.code === 11000) {
       return res.status(207).json({
         success: true,
-        message: 'Some transactions were duplicates and skipped',
-        inserted: error.insertedDocs ? error.insertedDocs.length : 0,
+        message: "Some duplicate transactions were skipped",
       });
     }
     next(error);
   }
 };
 
-// @desc    Delete transaction
-// @route   DELETE /api/transactions/:id
-// @access  Private
+
 exports.deleteTransaction = async (req, res, next) => {
   try {
-    const transaction = await Transaction.findOne({
+    const txn = await Transaction.findOne({
       _id: req.params.id,
-      userId: req.user.id,
+      user: req.user.id, // 🔄 was userId
     });
 
-    if (!transaction) {
-      return res.status(404).json({
-        success: false,
-        message: 'Transaction not found',
-      });
+    if (!txn) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Transaction not found" });
     }
 
-    await transaction.deleteOne();
+    await txn.deleteOne();
 
-    res.status(200).json({
-      success: true,
-      data: {},
-    });
+    res.status(200).json({ success: true, data: {} });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Get transaction statistics
-// @route   GET /api/transactions/stats
-// @access  Private
+// Dashboard stats
+// controllers/transactionController.js
+
+
+// controllers/transactionController.js
+
 exports.getTransactionStats = async (req, res, next) => {
   try {
-    const stats = await Transaction.aggregate([
-      { $match: { userId: req.user._id } },
+    const userId = req.user.id;
+
+    // 1) Overview
+    const overviewAgg = await Transaction.aggregate([
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
       {
         $group: {
           _id: null,
           totalTransactions: { $sum: 1 },
-          totalRevenue: { $sum: '$totalAmount' },
-          averageTransactionValue: { $avg: '$totalAmount' },
-          uniqueCustomers: { $addToSet: '$customerId' },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          totalTransactions: 1,
-          totalRevenue: 1,
-          averageTransactionValue: 1,
-          uniqueCustomers: { $size: '$uniqueCustomers' },
+          totalRevenue: { $sum: "$totalAmount" },
+          averageTransactionValue: { $avg: "$totalAmount" },
+          uniqueShoppers: { $addToSet: "$shopperId" },   // 👈 matches schema
         },
       },
     ]);
 
-    // Revenue by date
+    const o = overviewAgg[0] || {
+      totalTransactions: 0,
+      totalRevenue: 0,
+      averageTransactionValue: 0,
+      uniqueShoppers: [],
+    };
+
+    // 2) Revenue by date (last 30 days)
+    const from = new Date();
+    from.setDate(from.getDate() - 30);
+
     const revenueByDate = await Transaction.aggregate([
-      { $match: { userId: req.user._id } },
       {
-        $group: {
-          _id: {
-            $dateToString: { format: '%Y-%m-%d', date: '$timestamp' },
-          },
-          revenue: { $sum: '$totalAmount' },
-          transactions: { $sum: 1 },
+        $match: {
+          user: new mongoose.Types.ObjectId(userId),
+          timestamp: { $gte: from },
         },
       },
-      { $sort: { _id: -1 } },
-      { $limit: 30 },
-    ]);
-
-    // Top products
-    const topProducts = await Transaction.aggregate([
-      { $match: { userId: req.user._id } },
-      { $unwind: '$items' },
       {
         $group: {
-          _id: '$items.productId',
-          productName: { $first: '$items.productName' },
-          totalQuantity: { $sum: '$items.quantity' },
-          totalRevenue: { $sum: { $multiply: ['$items.quantity', '$items.price'] } },
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$timestamp" } },
+          revenue: { $sum: "$totalAmount" },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    // 3) Top products by quantity
+    const topProducts = await Transaction.aggregate([
+      { $match: { user: new mongoose.Types.ObjectId(userId) } },
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: "$items.productId",
+          productName: { $first: "$items.productName" },
+          totalQuantity: { $sum: "$items.quantity" },
         },
       },
       { $sort: { totalQuantity: -1 } },
       { $limit: 10 },
     ]);
 
-    res.status(200).json({
+    res.json({
       success: true,
       data: {
-        overview: stats[0] || {
-          totalTransactions: 0,
-          totalRevenue: 0,
-          averageTransactionValue: 0,
-          uniqueCustomers: 0,
+        overview: {
+          totalTransactions: o.totalTransactions,
+          totalRevenue: o.totalRevenue,
+          averageTransactionValue: o.averageTransactionValue,
+          uniqueCustomers: o.uniqueShoppers.length, // field name for frontend
         },
         revenueByDate,
         topProducts,
       },
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
   }
 };

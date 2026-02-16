@@ -1,43 +1,74 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+// middleware/auth.js
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-exports.protect = async (req, res, next) => {
+// =========================
+//      PROTECT ROUTE
+// =========================
+const protect = async (req, res, next) => {
   let token;
 
+  // Read token from Authorization header
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
+    req.headers.authorization.startsWith("Bearer ")
   ) {
-    token = req.headers.authorization.split(' ')[1];
+    token = req.headers.authorization.split(" ")[1];
   }
-
+  
+  // Token missing
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: 'Not authorized to access this route',
+      message: "Not authorized — token missing",
     });
   }
 
   try {
+    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id);
+
+    // Fetch user
+    const user = await User.findById(decoded.id).select("-password");
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Not authorized — user not found",
+      });
+    }
+
+    // ✅ normalize user object
+    req.user = {
+      ...user.toObject(),
+      id: user._id.toString(),
+    };
+
     next();
-  } catch (error) {
+  } catch (err) {
     return res.status(401).json({
       success: false,
-      message: 'Not authorized to access this route',
+      message: "Not authorized — invalid or expired token",
     });
   }
 };
 
-exports.authorize = (...roles) => {
+// =========================
+//      ROLE CHECK
+// =========================
+const authorize = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        message: `User role ${req.user.role} is not authorized to access this route`,
+        message: `Role '${req.user.role}' not authorized`,
       });
     }
     next();
   };
+};
+
+module.exports = {
+  protect,
+  authorize,
 };

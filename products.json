@@ -1,0 +1,211 @@
+[
+  {
+    "productId": "P1001",
+    "name": "Amul Full Cream Milk",
+    "category": "Dairy",
+    "price": 32,
+    "description": "Fresh full cream milk",
+    "stock": 120,
+    "features": ["Rich taste", "High calcium"],
+    "expiryDate": "2026-02-16",
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1002",
+    "name": "Paneer 200g",
+    "category": "Dairy",
+    "price": 90,
+    "description": "Fresh cottage cheese",
+    "stock": 60,
+    "features": ["High protein", "Soft texture"],
+    "expiryDate": "2026-02-17",
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1003",
+    "name": "Butter 100g",
+    "category": "Dairy",
+    "price": 55,
+    "description": "Creamy salted butter",
+    "stock": 40,
+    "features": ["Smooth", "Rich flavor"],
+    "expiryDate": "2026-02-17",
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1004",
+    "name": "iPhone 14",
+    "category": "Electronics",
+    "price": 69999,
+    "description": "Apple smartphone with A15 chip",
+    "stock": 15,
+    "features": ["A15 Bionic", "Dual Camera", "iOS"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1005",
+    "name": "Samsung 43 Inch Smart TV",
+    "category": "Electronics",
+    "price": 28999,
+    "description": "Full HD Smart LED TV",
+    "stock": 10,
+    "features": ["Smart TV", "Full HD", "HDR"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1006",
+    "name": "Bluetooth Headphones",
+    "category": "Electronics",
+    "price": 1999,
+    "description": "Wireless over-ear headphones",
+    "stock": 25,
+    "features": ["Bluetooth 5.0", "Noise Isolation"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1007",
+    "name": "Basmati Rice 5kg",
+    "category": "Grocery",
+    "price": 650,
+    "description": "Premium long grain rice",
+    "stock": 100,
+    "features": ["Aromatic", "Long grain"],
+    "expiryDate": "2027-01-01",
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1008",
+    "name": "Toor Dal 1kg",
+    "category": "Grocery",
+    "price": 180,
+    "description": "Unpolished toor dal",
+    "stock": 80,
+    "features": ["High protein", "Organic"],
+    "expiryDate": "2026-12-10",
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1009",
+    "name": "Cooking Oil 1L",
+    "category": "Grocery",
+    "price": 160,
+    "description": "Refined sunflower oil",
+    "stock": 70,
+    "features": ["Heart healthy", "Light"],
+    "expiryDate": "2026-09-05",
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1010",
+    "name": "Men Cotton T-Shirt",
+    "category": "Fashion",
+    "price": 499,
+    "description": "Comfortable cotton t-shirt",
+    "stock": 45,
+    "features": ["Breathable", "Soft fabric"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1011",
+    "name": "Women Denim Jeans",
+    "category": "Fashion",
+    "price": 1299,
+    "description": "Slim fit denim jeans",
+    "stock": 30,
+    "features": ["Stretchable", "Stylish"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1012",
+    "name": "Sports Shoes",
+    "category": "Fashion",
+    "price": 2499,
+    "description": "Running shoes for men",
+    "stock": 20,
+    "features": ["Lightweight", "Comfort sole"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1013",
+    "name": "Wooden Study Table",
+    "category": "Home & Furniture",
+    "price": 5499,
+    "description": "Compact wooden study table",
+    "stock": 8,
+    "features": ["Solid wood", "Durable"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1014",
+    "name": "Office Chair",
+    "category": "Home & Furniture",
+    "price": 3999,
+    "description": "Ergonomic office chair",
+    "stock": 12,
+    "features": ["Adjustable height", "Comfortable"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1015",
+    "name": "LED Table Lamp",
+    "category": "Home & Decor",
+    "price": 899,
+    "description": "Energy efficient LED lamp",
+    "stock": 35,
+    "features": ["Low power", "Modern design"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1016",
+    "name": "Shampoo 340ml",
+    "category": "Personal Care",
+    "price": 210,
+    "description": "Anti-dandruff shampoo",
+    "stock": 50,
+    "features": ["Herbal", "No parabens"],
+    "expiryDate": "2026-11-30",
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1017",
+    "name": "Bath Soap Pack",
+    "category": "Personal Care",
+    "price": 120,
+    "description": "Pack of 4 bathing soaps",
+    "stock": 65,
+    "features": ["Moisturizing", "Fresh fragrance"],
+    "expiryDate": "2026-08-15",
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1018",
+    "name": "Notebook A4",
+    "category": "Stationery",
+    "price": 60,
+    "description": "200 pages ruled notebook",
+    "stock": 150,
+    "features": ["Smooth paper", "Durable binding"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1019",
+    "name": "Ball Pen Pack",
+    "category": "Stationery",
+    "price": 90,
+    "description": "Pack of 10 blue pens",
+    "stock": 200,
+    "features": ["Smooth writing", "Long lasting"],
+    "status": "ACTIVE"
+  },
+  {
+    "productId": "P1020",
+    "name": "Organic Honey 500g",
+    "category": "Grocery",
+    "price": 350,
+    "description": "Pure organic honey",
+    "stock": 25,
+    "features": ["Natural", "No added sugar"],
+    "expiryDate": "2027-02-01",
+    "status": "ACTIVE"
+  }
+]

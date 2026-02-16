@@ -1,0 +1,186 @@
+[
+  {
+    "transactionId": "T2001",
+    "shopperId": "SHP001",
+    "items": [
+      { "productId": "P1001", "productName": "Amul Full Cream Milk", "quantity": 2, "price": 32 },
+      { "productId": "P1002", "productName": "Paneer 200g", "quantity": 1, "price": 90 }
+    ],
+    "totalAmount": 154,
+    "timestamp": "2026-02-01T10:15:00Z"
+  },
+  {
+    "transactionId": "T2002",
+    "shopperId": "SHP002",
+    "items": [
+      { "productId": "P1004", "productName": "iPhone 14", "quantity": 1, "price": 69999 }
+    ],
+    "totalAmount": 69999,
+    "timestamp": "2026-02-01T11:20:00Z"
+  },
+  {
+    "transactionId": "T2003",
+    "shopperId": "SHP003",
+    "items": [
+      { "productId": "P1007", "productName": "Basmati Rice 5kg", "quantity": 1, "price": 650 },
+      { "productId": "P1008", "productName": "Toor Dal 1kg", "quantity": 2, "price": 180 }
+    ],
+    "totalAmount": 1010,
+    "timestamp": "2026-02-02T09:40:00Z"
+  },
+  {
+    "transactionId": "T2004",
+    "shopperId": "SHP001",
+    "items": [
+      { "productId": "P1010", "productName": "Men Cotton T-Shirt", "quantity": 2, "price": 499 }
+    ],
+    "totalAmount": 998,
+    "timestamp": "2026-02-02T13:05:00Z"
+  },
+  {
+    "transactionId": "T2005",
+    "shopperId": "SHP004",
+    "items": [
+      { "productId": "P1006", "productName": "Bluetooth Headphones", "quantity": 1, "price": 1999 }
+    ],
+    "totalAmount": 1999,
+    "timestamp": "2026-02-03T15:30:00Z"
+  },
+  {
+    "transactionId": "T2006",
+    "shopperId": "SHP005",
+    "items": [
+      { "productId": "P1016", "productName": "Shampoo 340ml", "quantity": 2, "price": 210 },
+      { "productId": "P1017", "productName": "Bath Soap Pack", "quantity": 1, "price": 120 }
+    ],
+    "totalAmount": 540,
+    "timestamp": "2026-02-03T18:00:00Z"
+  },
+  {
+    "transactionId": "T2007",
+    "shopperId": "SHP002",
+    "items": [
+      { "productId": "P1013", "productName": "Wooden Study Table", "quantity": 1, "price": 5499 }
+    ],
+    "totalAmount": 5499,
+    "timestamp": "2026-02-04T10:10:00Z"
+  },
+  {
+    "transactionId": "T2008",
+    "shopperId": "SHP006",
+    "items": [
+      { "productId": "P1018", "productName": "Notebook A4", "quantity": 5, "price": 60 },
+      { "productId": "P1019", "productName": "Ball Pen Pack", "quantity": 2, "price": 90 }
+    ],
+    "totalAmount": 480,
+    "timestamp": "2026-02-04T12:45:00Z"
+  },
+  {
+    "transactionId": "T2009",
+    "shopperId": "SHP007",
+    "items": [
+      { "productId": "P1005", "productName": "Samsung 43 Inch Smart TV", "quantity": 1, "price": 28999 }
+    ],
+    "totalAmount": 28999,
+    "timestamp": "2026-02-05T09:30:00Z"
+  },
+  {
+    "transactionId": "T2010",
+    "shopperId": "SHP003",
+    "items": [
+      { "productId": "P1009", "productName": "Cooking Oil 1L", "quantity": 3, "price": 160 }
+    ],
+    "totalAmount": 480,
+    "timestamp": "2026-02-05T14:00:00Z"
+  },
+  {
+    "transactionId": "T2011",
+    "shopperId": "SHP008",
+    "items": [
+      { "productId": "P1020", "productName": "Organic Honey 500g", "quantity": 1, "price": 350 }
+    ],
+    "totalAmount": 350,
+    "timestamp": "2026-02-06T10:20:00Z"
+  },
+  {
+    "transactionId": "T2012",
+    "shopperId": "SHP001",
+    "items": [
+      { "productId": "P1003", "productName": "Butter 100g", "quantity": 3, "price": 55 }
+    ],
+    "totalAmount": 165,
+    "timestamp": "2026-02-06T16:45:00Z"
+  },
+  {
+    "transactionId": "T2013",
+    "shopperId": "SHP009",
+    "items": [
+      { "productId": "P1011", "productName": "Women Denim Jeans", "quantity": 1, "price": 1299 }
+    ],
+    "totalAmount": 1299,
+    "timestamp": "2026-02-07T11:15:00Z"
+  },
+  {
+    "transactionId": "T2014",
+    "shopperId": "SHP010",
+    "items": [
+      { "productId": "P1012", "productName": "Sports Shoes", "quantity": 1, "price": 2499 }
+    ],
+    "totalAmount": 2499,
+    "timestamp": "2026-02-07T18:10:00Z"
+  },
+  {
+    "transactionId": "T2015",
+    "shopperId": "SHP004",
+    "items": [
+      { "productId": "P1015", "productName": "LED Table Lamp", "quantity": 2, "price": 899 }
+    ],
+    "totalAmount": 1798,
+    "timestamp": "2026-02-08T09:00:00Z"
+  },
+  {
+    "transactionId": "T2016",
+    "shopperId": "SHP006",
+    "items": [
+      { "productId": "P1007", "productName": "Basmati Rice 5kg", "quantity": 2, "price": 650 }
+    ],
+    "totalAmount": 1300,
+    "timestamp": "2026-02-08T13:25:00Z"
+  },
+  {
+    "transactionId": "T2017",
+    "shopperId": "SHP002",
+    "items": [
+      { "productId": "P1006", "productName": "Bluetooth Headphones", "quantity": 2, "price": 1999 }
+    ],
+    "totalAmount": 3998,
+    "timestamp": "2026-02-09T10:40:00Z"
+  },
+  {
+    "transactionId": "T2018",
+    "shopperId": "SHP005",
+    "items": [
+      { "productId": "P1001", "productName": "Amul Full Cream Milk", "quantity": 5, "price": 32 }
+    ],
+    "totalAmount": 160,
+    "timestamp": "2026-02-09T17:30:00Z"
+  },
+  {
+    "transactionId": "T2019",
+    "shopperId": "SHP008",
+    "items": [
+      { "productId": "P1018", "productName": "Notebook A4", "quantity": 10, "price": 60 }
+    ],
+    "totalAmount": 600,
+    "timestamp": "2026-02-10T12:00:00Z"
+  },
+  {
+    "transactionId": "T2020",
+    "shopperId": "SHP010",
+    "items": [
+      { "productId": "P1002", "productName": "Paneer 200g", "quantity": 3, "price": 90 }
+    ],
+    "totalAmount": 270,
+    "timestamp": "2026-02-10T18:45:00Z"
+  }
+]

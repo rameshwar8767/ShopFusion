@@ -1,108 +1,156 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+// pages/Products.jsx
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getProducts,
   createProduct,
   bulkUploadProducts,
-} from '../redux/slices/productSlice';
-import { toast } from 'react-toastify';
-import { motion } from 'framer-motion';
+} from "../redux/slices/productSlice";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import {
   FiUpload,
   FiSearch,
   FiPlus,
   FiEdit,
   FiPackage,
-} from 'react-icons/fi';
+} from "react-icons/fi";
 
 const Products = () => {
   const dispatch = useDispatch();
-  const { products, isLoading } = useSelector((state) => state.products);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const {
+    products = [],
+    isLoading,
+  } = useSelector((state) => state.products);
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+
   const [newProduct, setNewProduct] = useState({
-    productId: '',
-    name: '',
-    category: '',
-    price: '',
-    stock: '',
-    description: '',
-    features: '',
+    productId: "",
+    name: "",
+    category: "",
+    price: "",
+    stock: "",
+    description: "",
+    features: "",
   });
 
   useEffect(() => {
     dispatch(getProducts());
   }, [dispatch]);
 
+  // ---------------- ADD PRODUCT ----------------
   const handleAddProduct = async (e) => {
     e.preventDefault();
+
+    if (!newProduct.productId || !newProduct.name) {
+      toast.error("Product ID and Name are required");
+      return;
+    }
+
     try {
       const productData = {
         ...newProduct,
-        price: parseFloat(newProduct.price),
-        stock: parseInt(newProduct.stock),
-        features: newProduct.features.split(',').map((f) => f.trim()),
+        price: Number(newProduct.price),
+        stock: Number(newProduct.stock),
+        features: newProduct.features
+          ? newProduct.features.split(",").map((f) => f.trim())
+          : [],
       };
+
       await dispatch(createProduct(productData)).unwrap();
-      toast.success('Product added successfully!');
+      toast.success("Product added successfully");
+
       setShowAddModal(false);
       setNewProduct({
-        productId: '',
-        name: '',
-        category: '',
-        price: '',
-        stock: '',
-        description: '',
-        features: '',
+        productId: "",
+        name: "",
+        category: "",
+        price: "",
+        stock: "",
+        description: "",
+        features: "",
       });
-    } catch (error) {
-      toast.error('Error adding product');
+
+      dispatch(getProducts());
+    } catch (err) {
+      toast.error(err || "Failed to add product");
     }
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
+  // ---------------- BULK UPLOAD ----------------
+  const handleFileUpload = (e) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = async (event) => {
       try {
-        const jsonData = JSON.parse(event.target.result);
-        await dispatch(bulkUploadProducts(jsonData)).unwrap();
-        toast.success('Products uploaded successfully!');
-        setShowUploadModal(false);
+        const parsed = JSON.parse(event.target.result);
+
+        let productsArray;
+        if (Array.isArray(parsed)) {
+          productsArray = parsed;
+        } else if (Array.isArray(parsed.products)) {
+          productsArray = parsed.products;
+        } else {
+          toast.error(
+            "JSON must be an array of products or { products: [...] }"
+          );
+          e.target.value = "";
+          return;
+        }
+
+        if (!productsArray.length) {
+          toast.error("No products found in JSON");
+          e.target.value = "";
+          return;
+        }
+
+        await dispatch(bulkUploadProducts(productsArray)).unwrap();
+        toast.success("Products uploaded successfully");
+
         dispatch(getProducts());
-      } catch (error) {
-        toast.error('Error uploading products');
+        setShowUploadModal(false);
+      } catch (err) {
+        toast.error("Invalid JSON file");
+      } finally {
+        e.target.value = "";
       }
     };
     reader.readAsText(file);
   };
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.productId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // ---------------- FILTER ----------------
+  const filteredProducts = products.filter((p) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      p.name?.toLowerCase().includes(term) ||
+      p.productId?.toLowerCase().includes(term) ||
+      p.category?.toLowerCase().includes(term)
+    );
+  });
 
   return (
     <div className="bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
+          className="flex flex-col md:flex-row justify-between mb-8"
         >
           <div>
-            <h1 className="text-4xl font-bold gradient-text mb-2">Products</h1>
+            <h1 className="text-4xl font-bold gradient-text mb-2">
+              Products
+            </h1>
             <p className="text-gray-600">Manage your product catalog</p>
           </div>
 
-          <div className="flex space-x-3 mt-4 md:mt-0">
+          <div className="flex gap-3 mt-4 md:mt-0">
             <button
               onClick={() => setShowUploadModal(true)}
               className="btn-secondary btn-sm flex items-center"
@@ -121,227 +169,100 @@ const Products = () => {
         </motion.div>
 
         {/* Search */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="card p-4 mb-6"
-        >
+        <div className="card p-4 mb-6">
           <div className="relative">
-            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
-              type="text"
-              placeholder="Search products by name, ID, or category..."
+              className="input-field pl-10"
+              placeholder="Search by name, ID, or category"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input-field pl-10"
             />
           </div>
-        </motion.div>
+        </div>
 
-        {/* Products Grid */}
+        {/* Content */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="spinner"></div>
-            <span className="ml-3 text-gray-600">Loading products...</span>
+          <div className="flex justify-center py-12">
+            <div className="spinner" />
           </div>
         ) : filteredProducts.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="card p-12 text-center"
-          >
-            <FiPackage className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <div className="card p-12 text-center">
+            <FiPackage className="mx-auto h-16 w-16 text-gray-400 mb-4" />
             <p className="text-gray-600 mb-4">No products found</p>
             <button
               onClick={() => setShowAddModal(true)}
               className="btn-primary btn-sm"
             >
-              Add Your First Product
+              Add Product
             </button>
-          </motion.div>
+          </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product, index) => (
-              <motion.div
-                key={product._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="card hover:shadow-elegant-lg transition-shadow duration-300"
-              >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900 mb-1">
-                        {product.name}
-                      </h3>
-                      <p className="text-sm text-gray-600">{product.productId}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredProducts.map((p) => {
+              const features = Array.isArray(p.features) ? p.features : [];
+              return (
+                <div key={p._id} className="card hover:shadow-lg">
+                  <div className="p-6">
+                    <div className="flex justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold">{p.name}</h3>
+                        <p className="text-xs text-gray-500">{p.productId}</p>
+                      </div>
+                      <FiEdit className="text-gray-400" />
                     </div>
-                    <button className="text-gray-400 hover:text-primary-600 transition-colors">
-                      <FiEdit className="h-5 w-5" />
-                    </button>
-                  </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Category:</span>
-                      <span className="badge badge-info text-xs">
-                        {product.category}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Price:</span>
+                    <p className="text-sm">
+                      Price:{" "}
                       <span className="font-semibold text-green-600">
-                        ${product.price.toFixed(2)}
+                        ${Number(p.price || 0).toFixed(2)}
                       </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Stock:</span>
-                      <span
-                        className={`badge text-xs ${
-                          product.stock > 50
-                            ? 'badge-success'
-                            : product.stock > 10
-                            ? 'badge-warning'
-                            : 'badge-danger'
-                        }`}
-                      >
-                        {product.stock}
-                      </span>
-                    </div>
-                  </div>
+                    </p>
 
-                  {product.features && product.features.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      <p className="text-xs text-gray-600 mb-2">Features:</p>
-                      <div className="flex flex-wrap gap-1">
-                        {product.features.slice(0, 3).map((feature, idx) => (
-                          <span
-                            key={idx}
-                            className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded"
-                          >
-                            {feature}
+                    <p className="text-sm">
+                      Stock:{" "}
+                      <span className="font-semibold">{p.stock}</span>
+                    </p>
+
+                    {features.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1">
+                        {features.slice(0, 3).map((f, i) => (
+                          <span key={i} className="badge badge-info text-xs">
+                            {f}
                           </span>
                         ))}
-                        {product.features.length > 3 && (
-                          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 rounded">
-                            +{product.features.length - 3}
+                        {features.length > 3 && (
+                          <span className="badge text-xs">
+                            +{features.length - 3}
                           </span>
                         )}
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </motion.div>
-            ))}
+              );
+            })}
           </div>
         )}
 
-        {/* Add Product Modal */}
+        {/* ADD MODAL */}
         {showAddModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="card p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-            >
-              <h3 className="text-2xl font-semibold mb-6">Add New Product</h3>
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="card p-6 w-full max-w-2xl overflow-y-auto max-h-[90vh]">
+              <h3 className="text-xl font-semibold mb-4">Add Product</h3>
               <form onSubmit={handleAddProduct} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="label">Product ID</label>
-                    <input
-                      type="text"
-                      required
-                      value={newProduct.productId}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, productId: e.target.value })
-                      }
-                      className="input-field"
-                      placeholder="e.g., P001"
-                    />
-                  </div>
-                  <div>
-                    <label className="label">Product Name</label>
-                    <input
-                      type="text"
-                      required
-                      value={newProduct.name}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, name: e.target.value })
-                      }
-                      className="input-field"
-                      placeholder="e.g., Laptop"
-                    />
-                  </div>
-                  <div>
-                    <label className="label">Category</label>
-                    <input
-                      type="text"
-                      required
-                      value={newProduct.category}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, category: e.target.value })
-                      }
-                      className="input-field"
-                      placeholder="e.g., Electronics"
-                    />
-                  </div>
-                  <div>
-                    <label className="label">Price ($)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      required
-                      value={newProduct.price}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, price: e.target.value })
-                      }
-                      className="input-field"
-                      placeholder="0.00"
-                    />
-                  </div>
-                  <div>
-                    <label className="label">Stock</label>
-                    <input
-                      type="number"
-                      required
-                      value={newProduct.stock}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, stock: e.target.value })
-                      }
-                      className="input-field"
-                      placeholder="0"
-                    />
-                  </div>
-                  <div>
-                    <label className="label">Features (comma-separated)</label>
-                    <input
-                      type="text"
-                      value={newProduct.features}
-                      onChange={(e) =>
-                        setNewProduct({ ...newProduct, features: e.target.value })
-                      }
-                      className="input-field"
-                      placeholder="e.g., Intel i7, 16GB RAM"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="label">Description</label>
-                  <textarea
-                    value={newProduct.description}
-                    onChange={(e) =>
-                      setNewProduct({ ...newProduct, description: e.target.value })
-                    }
+                {Object.keys(newProduct).map((key) => (
+                  <input
+                    key={key}
                     className="input-field"
-                    rows="3"
-                    placeholder="Product description"
+                    placeholder={key}
+                    value={newProduct[key]}
+                    onChange={(e) =>
+                      setNewProduct({ ...newProduct, [key]: e.target.value })
+                    }
                   />
-                </div>
-                <div className="flex justify-end space-x-3 pt-4">
+                ))}
+                <div className="flex justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setShowAddModal(false)}
@@ -349,42 +270,33 @@ const Products = () => {
                   >
                     Cancel
                   </button>
-                  <button type="submit" className="btn-primary">
-                    Add Product
-                  </button>
+                  <button className="btn-primary">Save</button>
                 </div>
               </form>
-            </motion.div>
+            </div>
           </div>
         )}
 
-        {/* Upload Modal */}
+        {/* UPLOAD MODAL */}
         {showUploadModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="card p-6 max-w-md w-full"
-            >
-              <h3 className="text-xl font-semibold mb-4">Upload Products</h3>
-              <p className="text-gray-600 mb-4">
-                Upload a JSON file containing your product data
-              </p>
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="card p-6 max-w-md w-full">
+              <h3 className="font-semibold mb-3">Upload Products JSON</h3>
               <input
                 type="file"
                 accept=".json"
                 onChange={handleFileUpload}
-                className="input-field mb-4"
+                className="mb-4"
               />
-              <div className="flex justify-end space-x-3">
+              <div className="flex justify-end">
                 <button
                   onClick={() => setShowUploadModal(false)}
                   className="btn-secondary btn-sm"
                 >
-                  Cancel
+                  Close
                 </button>
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
       </div>

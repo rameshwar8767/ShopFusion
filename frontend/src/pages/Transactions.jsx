@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getTransactions,
   bulkUploadTransactions,
   deleteTransaction,
-} from '../redux/slices/transactionSlice';
-import { toast } from 'react-toastify';
-import { motion } from 'framer-motion';
+} from "../redux/slices/transactionSlice";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import {
   FiUpload,
   FiTrash2,
@@ -14,8 +14,8 @@ import {
   FiFilter,
   FiDownload,
   FiPlus,
-} from 'react-icons/fi';
-import { format } from 'date-fns';
+} from "react-icons/fi";
+import { format } from "date-fns";
 
 const Transactions = () => {
   const dispatch = useDispatch();
@@ -23,49 +23,91 @@ const Transactions = () => {
     (state) => state.transactions
   );
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showUploadModal, setShowUploadModal] = useState(false);
 
+  // Single effect: fetch with page + search
   useEffect(() => {
-    dispatch(getTransactions({ page: currentPage, limit: 20 }));
-  }, [dispatch, currentPage]);
+    dispatch(
+      getTransactions({
+        page: currentPage,
+        limit: 20,
+        search: searchTerm,
+      })
+    );
+  }, [dispatch, currentPage, searchTerm]);
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  // Local filtering (optional, if backend search is not enough)
+  const filteredTransactions = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return transactions;
+    return transactions.filter((t) => {
+      return (
+        t.transactionId?.toLowerCase().includes(term) ||
+        t.customerId?.toLowerCase().includes(term)
+      );
+    });
+  }, [transactions, searchTerm]);
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const jsonData = JSON.parse(event.target.result);
-        await dispatch(bulkUploadTransactions(jsonData)).unwrap();
-        toast.success('Transactions uploaded successfully!');
-        setShowUploadModal(false);
-        dispatch(getTransactions({ page: 1, limit: 20 }));
-      } catch (error) {
-        toast.error('Error uploading transactions');
+// ---------------- BULK UPLOAD ----------------
+const handleFileUpload = (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = async (event) => {
+    try {
+      const parsed = JSON.parse(event.target.result);
+
+      // Normalize to array of transaction objects
+      let txns;
+      if (Array.isArray(parsed)) {
+        // [ {...}, {...} ]
+        txns = parsed;
+      } else if (Array.isArray(parsed.transactions)) {
+        // { transactions: [ ... ] }
+        txns = parsed.transactions;
+      } else {
+        // single object
+        txns = [parsed];
       }
-    };
-    reader.readAsText(file);
+
+      if (!txns.length) {
+        toast.error("No transactions found in JSON");
+        e.target.value = "";
+        return;
+      }
+
+      await dispatch(bulkUploadTransactions(txns)).unwrap();
+      toast.success("Transactions uploaded successfully");
+
+      setShowUploadModal(false);
+      setCurrentPage(1);
+      setSearchTerm("");
+      dispatch(getTransactions({ page: 1, limit: 20, search: "" }));
+    } catch (err) {
+      toast.error("Invalid JSON file");
+    } finally {
+      // allow selecting same file again
+      e.target.value = "";
+    }
   };
+  reader.readAsText(file);
+};
+
+
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this transaction?')) {
+    if (window.confirm("Are you sure you want to delete this transaction?")) {
       try {
         await dispatch(deleteTransaction(id)).unwrap();
-        toast.success('Transaction deleted successfully');
+        toast.success("Transaction deleted successfully");
       } catch (error) {
-        toast.error('Error deleting transaction');
+        toast.error("Error deleting transaction");
       }
     }
   };
-
-  const filteredTransactions = transactions.filter(
-    (transaction) =>
-      transaction.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.customerId.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="bg-gray-50 py-8">
@@ -93,7 +135,10 @@ const Transactions = () => {
               <FiUpload className="mr-2" />
               Upload Data
             </button>
-            <button className="btn-primary btn-sm flex items-center">
+            <button
+              disabled
+              className="btn-primary btn-sm flex items-center opacity-60 cursor-not-allowed"
+            >
               <FiPlus className="mr-2" />
               Add Transaction
             </button>
@@ -122,7 +167,10 @@ const Transactions = () => {
               <FiFilter className="mr-2" />
               Filters
             </button>
-            <button className="btn-secondary btn-sm flex items-center justify-center">
+            <button
+              onClick={() => toast.info("Export feature coming soon")}
+              className="btn-secondary btn-sm flex items-center justify-center"
+            >
               <FiDownload className="mr-2" />
               Export
             </button>
@@ -193,7 +241,10 @@ const Transactions = () => {
                           ${transaction.totalAmount.toFixed(2)}
                         </td>
                         <td className="table-td text-gray-600">
-                          {format(new Date(transaction.timestamp), 'MMM dd, yyyy')}
+                          {format(
+                            new Date(transaction.timestamp),
+                            "MMM dd, yyyy"
+                          )}
                         </td>
                         <td className="table-td">
                           <button
@@ -213,7 +264,7 @@ const Transactions = () => {
               {pagination.pages > 1 && (
                 <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                   <p className="text-sm text-gray-600">
-                    Showing {filteredTransactions.length} of {pagination.total}{' '}
+                    Showing {filteredTransactions.length} of {pagination.total}{" "}
                     transactions
                   </p>
                   <div className="flex space-x-2">
@@ -242,36 +293,38 @@ const Transactions = () => {
         </motion.div>
 
         {/* Upload Modal */}
-        {showUploadModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="card p-6 max-w-md w-full mx-4"
-            >
-              <h3 className="text-xl font-semibold mb-4">
-                Upload Transaction Data
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Upload a JSON file containing your transaction data
-              </p>
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileUpload}
-                className="input-field mb-4"
-              />
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowUploadModal(false)}
-                  className="btn-secondary btn-sm"
-                >
-                  Cancel
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
+       {/* Upload Modal */}
+{showUploadModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <motion.div
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      className="card p-6 max-w-md w-full mx-4"
+    >
+      <h3 className="text-xl font-semibold mb-4">
+        Upload Transaction Data
+      </h3>
+      <p className="text-gray-600 mb-4">
+        Upload a JSON file containing your transaction data
+      </p>
+      <input
+        type="file"
+        accept=".json"
+        onChange={handleFileUpload}
+        className="input-field mb-4"
+      />
+      <div className="flex justify-end space-x-3">
+        <button
+          onClick={() => setShowUploadModal(false)}
+          className="btn-secondary btn-sm"
+        >
+          Cancel
+        </button>
+      </div>
+    </motion.div>
+  </div>
+)}
+
       </div>
     </div>
   );

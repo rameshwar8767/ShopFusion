@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+pandas
+pymongo
+mlxtend
+python-dotenv

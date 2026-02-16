@@ -1,19 +1,20 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
-// Request interceptor for adding token
+// 🔐 Attach JWT token
 api.interceptors.request.use(
   (config) => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (user && user.token) {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.token) {
       config.headers.Authorization = `Bearer ${user.token}`;
     }
     return config;
@@ -21,13 +22,13 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor for handling errors
+// 🚫 Handle auth expiry
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      localStorage.removeItem("user");
+      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

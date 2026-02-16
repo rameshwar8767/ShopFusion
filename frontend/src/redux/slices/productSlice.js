@@ -1,5 +1,6 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../services/api';
+// redux/slices/productSlice.js
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../../services/api";
 
 const initialState = {
   products: [],
@@ -8,108 +9,142 @@ const initialState = {
   isLoading: false,
   isError: false,
   isSuccess: false,
-  message: '',
+  message: "",
 };
 
-// Get all products
+// ================= GET ALL PRODUCTS =================
 export const getProducts = createAsyncThunk(
-  'products/getAll',
+  "products/getAll",
   async (params, thunkAPI) => {
     try {
-      const response = await api.get('/products', { params });
-      return response.data;
+      const res = await api.get("/products", { params });
+      // Expecting { success, data: [ ...products ] }
+      return res.data;
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch products"
+      );
     }
   }
 );
 
-// Get product categories
+// ================= GET CATEGORIES =================
 export const getCategories = createAsyncThunk(
-  'products/getCategories',
+  "products/getCategories",
   async (_, thunkAPI) => {
     try {
-      const response = await api.get('/products/categories');
-      return response.data;
+      const res = await api.get("/products/categories");
+      return res.data;
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch categories"
+      );
     }
   }
 );
 
-// Create product
+// ================= CREATE PRODUCT =================
 export const createProduct = createAsyncThunk(
-  'products/create',
+  "products/create",
   async (productData, thunkAPI) => {
     try {
-      const response = await api.post('/products', productData);
-      return response.data;
+      const res = await api.post("/products", productData);
+      // Expecting { success, data: product }
+      return res.data;
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Product creation failed"
+      );
     }
   }
 );
 
-// Bulk upload products
+// ================= BULK UPLOAD =================
 export const bulkUploadProducts = createAsyncThunk(
-  'products/bulkUpload',
+  "products/bulkUpload",
   async (products, thunkAPI) => {
     try {
-      const response = await api.post('/products/bulk', { products });
-      return response.data;
+      const res = await api.post("/products/bulk", { products });
+      // Could be { success, data: inserted[] } or count, etc.
+      return res.data;
     } catch (error) {
-      const message =
-        error.response?.data?.message || error.message || error.toString();
-      return thunkAPI.rejectWithValue(message);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Bulk upload failed"
+      );
     }
   }
 );
 
-export const productSlice = createSlice({
-  name: 'products',
+// ================= SLICE =================
+const productSlice = createSlice({
+  name: "products",
   initialState,
   reducers: {
     reset: (state) => {
       state.isLoading = false;
-      state.isSuccess = false;
       state.isError = false;
-      state.message = '';
+      state.isSuccess = false;
+      state.message = "";
     },
   },
   extraReducers: (builder) => {
     builder
+      // ---------- GET PRODUCTS ----------
       .addCase(getProducts.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
       })
       .addCase(getProducts.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.products = action.payload.data;
+        // Support either { data: [...] } or { products: [...] }
+        state.products = action.payload?.data || action.payload?.products || [];
       })
       .addCase(getProducts.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
+
+      // ---------- GET CATEGORIES ----------
+      .addCase(getCategories.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(getCategories.fulfilled, (state, action) => {
-        state.categories = action.payload.data;
+        state.isLoading = false;
+        state.categories = action.payload?.data || [];
+      })
+      .addCase(getCategories.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+
+      // ---------- CREATE PRODUCT ----------
+      .addCase(createProduct.pending, (state) => {
+        state.isLoading = true;
       })
       .addCase(createProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.isSuccess = true;
-        state.products.unshift(action.payload.data);
+        if (action.payload?.data) {
+          state.products.unshift(action.payload.data);
+        }
       })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+
+      // ---------- BULK UPLOAD ----------
       .addCase(bulkUploadProducts.pending, (state) => {
         state.isLoading = true;
       })
       .addCase(bulkUploadProducts.fulfilled, (state) => {
         state.isLoading = false;
         state.isSuccess = true;
+        // Note: Components should call getProducts() after success
       })
       .addCase(bulkUploadProducts.rejected, (state, action) => {
         state.isLoading = false;

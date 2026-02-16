@@ -1,27 +1,36 @@
-const Product = require('../models/Product');
-const { validationResult } = require('express-validator');
+// controllers/productController.js
 
-// @desc    Get all products
-// @route   GET /api/products
-// @access  Private
+const Product = require("../models/Product");
+const { validationResult } = require("express-validator");
+
+/**
+ * ========================================================
+ * @desc    Get all products (search + filter + pagination)
+ * @route   GET /api/products
+ * @access  Private (Retailer)
+ * ========================================================
+ */
 exports.getProducts = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
     const skip = (page - 1) * limit;
 
-    const query = {};
+    // 🔐 Retailer-specific query
+    const query = { user: req.user.id };
 
-    // Category filtering
+    // Category filter
     if (req.query.category) {
       query.category = req.query.category;
     }
 
-    // Search
+    // Search filter
     if (req.query.search) {
+      const keyword = req.query.search.trim();
       query.$or = [
-        { name: { $regex: req.query.search, $options: 'i' } },
-        { productId: { $regex: req.query.search, $options: 'i' } },
+        { name: { $regex: keyword, $options: "i" } },
+        { productId: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
       ];
     }
 
@@ -34,8 +43,8 @@ exports.getProducts = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      count: products.length,
       total,
+      count: products.length,
       page,
       pages: Math.ceil(total / limit),
       data: products,
@@ -45,17 +54,24 @@ exports.getProducts = async (req, res, next) => {
   }
 };
 
-// @desc    Get single product
-// @route   GET /api/products/:id
-// @access  Private
+/**
+ * ========================================================
+ * @desc    Get single product
+ * @route   GET /api/products/:id
+ * @access  Private
+ * ========================================================
+ */
 exports.getProduct = async (req, res, next) => {
   try {
-    const product = await Product.findOne({ productId: req.params.id });
+    const product = await Product.findOne({
+      productId: req.params.id,
+      user: req.user.id, // 🔐 ownership check
+    });
 
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: 'Product not found',
+        message: "Product not found or unauthorized",
       });
     }
 
@@ -68,9 +84,13 @@ exports.getProduct = async (req, res, next) => {
   }
 };
 
-// @desc    Create new product
-// @route   POST /api/products
-// @access  Private
+/**
+ * ========================================================
+ * @desc    Create new product
+ * @route   POST /api/products
+ * @access  Private
+ * ========================================================
+ */
 exports.createProduct = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -81,7 +101,16 @@ exports.createProduct = async (req, res, next) => {
       });
     }
 
-    const product = await Product.create(req.body);
+    if (!req.body.productId) {
+      req.body.productId = `PROD-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 5)}`;
+    }
+
+    const product = await Product.create({
+      ...req.body,
+      user: req.user.id, // 🔐 link retailer
+    });
 
     res.status(201).json({
       success: true,
@@ -91,64 +120,63 @@ exports.createProduct = async (req, res, next) => {
     next(error);
   }
 };
-
-// @desc    Bulk upload products
-// @route   POST /api/products/bulk
-// @access  Private
+// controllers/productController.js
 exports.bulkUploadProducts = async (req, res, next) => {
   try {
     const { products } = req.body;
+    const userId = req.user.id;
 
-    if (!Array.isArray(products) || products.length === 0) {
+    if (!Array.isArray(products) || !products.length) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide an array of products',
+        message: "Please provide a valid products array",
       });
     }
 
-    const insertedProducts = await Product.insertMany(products, {
-      ordered: false,
-    });
+    const withUser = products.map((p) => ({
+      ...p,
+      user: userId,
+    }));
+
+    const inserted = await Product.insertMany(withUser, { ordered: false });
 
     res.status(201).json({
       success: true,
-      count: insertedProducts.length,
-      data: insertedProducts,
+      count: inserted.length,
+      data: inserted,
     });
-  } catch (error) {
-    if (error.code === 11000) {
+  } catch (err) {
+    if (err.code === 11000) {
       return res.status(207).json({
         success: true,
-        message: 'Some products were duplicates and skipped',
-        inserted: error.insertedDocs ? error.insertedDocs.length : 0,
+        message: "Some duplicate products were skipped",
       });
     }
-    next(error);
+    next(err);
   }
 };
 
-// @desc    Update product
-// @route   PUT /api/products/:id
-// @access  Private
+/**
+ * ========================================================
+ * @desc    Update product
+ * @route   PUT /api/products/:id
+ * @access  Private
+ * ========================================================
+ */
 exports.updateProduct = async (req, res, next) => {
   try {
-    let product = await Product.findOne({ productId: req.params.id });
+    const product = await Product.findOneAndUpdate(
+      { productId: req.params.id, user: req.user.id }, // 🔐 ownership
+      req.body,
+      { new: true, runValidators: true }
+    );
 
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: 'Product not found',
+        message: "Product not found or unauthorized",
       });
     }
-
-    product = await Product.findOneAndUpdate(
-      { productId: req.params.id },
-      req.body,
-      {
-        new: true,
-        runValidators: true,
-      }
-    );
 
     res.status(200).json({
       success: true,
@@ -159,21 +187,26 @@ exports.updateProduct = async (req, res, next) => {
   }
 };
 
-// @desc    Delete product
-// @route   DELETE /api/products/:id
-// @access  Private
+/**
+ * ========================================================
+ * @desc    Delete product
+ * @route   DELETE /api/products/:id
+ * @access  Private
+ * ========================================================
+ */
 exports.deleteProduct = async (req, res, next) => {
   try {
-    const product = await Product.findOne({ productId: req.params.id });
+    const product = await Product.findOneAndDelete({
+      productId: req.params.id,
+      user: req.user.id, // 🔐 ownership
+    });
 
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: 'Product not found',
+        message: "Product not found or unauthorized",
       });
     }
-
-    await product.deleteOne();
 
     res.status(200).json({
       success: true,
@@ -184,12 +217,18 @@ exports.deleteProduct = async (req, res, next) => {
   }
 };
 
-// @desc    Get product categories
-// @route   GET /api/products/categories
-// @access  Private
+/**
+ * ========================================================
+ * @desc    Get all categories (for filters/dashboard)
+ * @route   GET /api/products/categories
+ * @access  Private
+ * ========================================================
+ */
 exports.getCategories = async (req, res, next) => {
   try {
-    const categories = await Product.distinct('category');
+    const categories = await Product.distinct("category", {
+      user: req.user.id, // 🔐 retailer filter
+    });
 
     res.status(200).json({
       success: true,

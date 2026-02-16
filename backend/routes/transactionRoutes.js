@@ -1,5 +1,7 @@
-const express = require('express');
-const { body } = require('express-validator');
+// routes/transactionRoutes.js
+const express = require("express");
+const { body } = require("express-validator");
+
 const {
   getTransactions,
   getTransaction,
@@ -7,32 +9,61 @@ const {
   bulkUploadTransactions,
   deleteTransaction,
   getTransactionStats,
-} = require('../controllers/transactionController');
-const { protect } = require('../middleware/auth');
+} = require("../controllers/transactionController");
+
+const { protect } = require("../middleware/auth");
 
 const router = express.Router();
 
-router.get('/stats', protect, getTransactionStats);
+// ======================================================
+//   ALL TRANSACTION ROUTES REQUIRE AUTHENTICATION
+// ======================================================
+router.use(protect);
 
+// ======================================================
+//   TRANSACTION STATISTICS (Dashboard)
+//   GET /api/transactions/stats
+// ======================================================
+router.get("/stats", protect, getTransactionStats);
+
+
+// ======================================================
+//   GET ALL TRANSACTIONS / CREATE TRANSACTION
+//   GET  /api/transactions
+//   POST /api/transactions
+// ======================================================
 router
-  .route('/')
-  .get(protect, getTransactions)
+  .route("/")
+  .get(getTransactions)
   .post(
-    protect,
     [
-      body('transactionId').optional(),
-      body('customerId').notEmpty().withMessage('Customer ID is required'),
-      body('items').isArray({ min: 1 }).withMessage('Items must be a non-empty array'),
-      body('totalAmount').isNumeric().withMessage('Total amount must be a number'),
+      body("shopperId")
+        .notEmpty()
+        .withMessage("Shopper ID is required"),
+      body("items")
+        .isArray({ min: 1 })
+        .withMessage("Items must be a non-empty array"),
+      body("totalAmount")
+        .isNumeric()
+        .withMessage("Total amount must be numeric"),
     ],
     createTransaction
   );
 
-router.post('/bulk', protect, bulkUploadTransactions);
+// ======================================================
+//   BULK UPLOAD TRANSACTIONS
+//   POST /api/transactions/bulk
+// ======================================================
+router.post("/bulk", bulkUploadTransactions);
 
+// ======================================================
+//   GET / DELETE SINGLE TRANSACTION
+//   GET    /api/transactions/:id
+//   DELETE /api/transactions/:id
+// ======================================================
 router
-  .route('/:id')
-  .get(protect, getTransaction)
-  .delete(protect, deleteTransaction);
+  .route("/:id")
+  .get(getTransaction)
+  .delete(deleteTransaction);
 
 module.exports = router;
