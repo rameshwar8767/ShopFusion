@@ -27,6 +27,22 @@ export const getProducts = createAsyncThunk(
     }
   }
 );
+// ================= UPDATE PRODUCT =================
+export const updateProduct = createAsyncThunk(
+  "products/update",
+  async ({ id, data }, thunkAPI) => {
+    try {
+      const res = await api.put(`/products/${id}`, data);
+      // Expecting { success, data: updatedProduct }
+      return res.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Product update failed"
+      );
+    }
+  }
+);
+
 
 // ================= GET CATEGORIES =================
 export const getCategories = createAsyncThunk(
@@ -150,7 +166,32 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-      });
+      })
+      // ---------- UPDATE PRODUCT ----------
+.addCase(updateProduct.pending, (state) => {
+  state.isLoading = true;
+  state.isError = false;
+})
+.addCase(updateProduct.fulfilled, (state, action) => {
+  state.isLoading = false;
+  state.isSuccess = true;
+  if (action.payload?.data) {
+    const index = state.products.findIndex(
+      (p) => p._id === action.payload.data._id
+    );
+    if (index !== -1) {
+      // Replace the updated product in the list
+      state.products[index] = action.payload.data;
+    }
+  }
+})
+.addCase(updateProduct.rejected, (state, action) => {
+  state.isLoading = false;
+  state.isError = true;
+  state.message = action.payload;
+});
+
+      
   },
 });
 

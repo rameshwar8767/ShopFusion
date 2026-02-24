@@ -5,7 +5,9 @@ import {
   getProducts,
   createProduct,
   bulkUploadProducts,
+  updateProduct, // <-- add this
 } from "../redux/slices/productSlice";
+
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import {
@@ -27,6 +29,17 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [editForm, setEditForm] = useState({
+    productId: "",
+    name: "",
+    category: "",
+    price: "",
+    stock: "",
+    description: "",
+    features: "",
+  });
 
   const [newProduct, setNewProduct] = useState({
     productId: "",
@@ -80,6 +93,42 @@ const Products = () => {
       toast.error(err || "Failed to add product");
     }
   };
+const handleEditChange = (e) => {
+  const { name, value } = e.target;
+  setEditForm((prev) => ({ ...prev, [name]: value }));
+};
+
+const handleUpdateProduct = async (e) => {
+  e.preventDefault();
+  if (!editingProduct) return;
+
+  if (!editForm.productId || !editForm.name) {
+    toast.error("Product ID and Name are required");
+    return;
+  }
+
+  try {
+    const updatedData = {
+      ...editForm,
+      price: Number(editForm.price),
+      stock: Number(editForm.stock),
+      features: editForm.features
+        ? editForm.features.split(",").map((f) => f.trim())
+        : [],
+    };
+
+    await dispatch(
+      updateProduct({ id: editingProduct._id, data: updatedData })
+    ).unwrap();
+
+    toast.success("Product updated successfully");
+    setShowEditModal(false);
+    setEditingProduct(null);
+    dispatch(getProducts());
+  } catch (err) {
+    toast.error(err || "Failed to update product");
+  }
+};
 
   // ---------------- BULK UPLOAD ----------------
   const handleFileUpload = (e) => {
@@ -203,42 +252,32 @@ const Products = () => {
               const features = Array.isArray(p.features) ? p.features : [];
               return (
                 <div key={p._id} className="card hover:shadow-lg">
-                  <div className="p-6">
-                    <div className="flex justify-between mb-3">
-                      <div>
-                        <h3 className="font-semibold">{p.name}</h3>
-                        <p className="text-xs text-gray-500">{p.productId}</p>
-                      </div>
-                      <FiEdit className="text-gray-400" />
-                    </div>
+                  <div className="flex justify-between mb-3">
+  <div>
+    <h3 className="font-semibold">{p.name}</h3>
+    <p className="text-xs text-gray-500">{p.productId}</p>
+  </div>
+  <button
+    type="button"
+    onClick={() => {
+      setEditingProduct(p);
+      setEditForm({
+        productId: p.productId || "",
+        name: p.name || "",
+        category: p.category || "",
+        price: p.price?.toString() || "",
+        stock: p.stock?.toString() || "",
+        description: p.description || "",
+        features: Array.isArray(p.features) ? p.features.join(", ") : "",
+      });
+      setShowEditModal(true);
+    }}
+    className="text-gray-400 hover:text-gray-600"
+  >
+    <FiEdit />
+  </button>
+</div>
 
-                    <p className="text-sm">
-                      Price:{" "}
-                      <span className="font-semibold text-green-600">
-                        ${Number(p.price || 0).toFixed(2)}
-                      </span>
-                    </p>
-
-                    <p className="text-sm">
-                      Stock:{" "}
-                      <span className="font-semibold">{p.stock}</span>
-                    </p>
-
-                    {features.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-1">
-                        {features.slice(0, 3).map((f, i) => (
-                          <span key={i} className="badge badge-info text-xs">
-                            {f}
-                          </span>
-                        ))}
-                        {features.length > 3 && (
-                          <span className="badge text-xs">
-                            +{features.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
                 </div>
               );
             })}
@@ -276,6 +315,83 @@ const Products = () => {
             </div>
           </div>
         )}
+        {/* EDIT MODAL */}
+{showEditModal && editingProduct && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="card p-6 w-full max-w-2xl overflow-y-auto max-h-[90vh]">
+      <h3 className="text-xl font-semibold mb-4">
+        Edit Product - {editingProduct.name}
+      </h3>
+      <form onSubmit={handleUpdateProduct} className="space-y-4">
+        <input
+          name="productId"
+          className="input-field"
+          placeholder="Product ID"
+          value={editForm.productId}
+          onChange={handleEditChange}
+        />
+        <input
+          name="name"
+          className="input-field"
+          placeholder="Name"
+          value={editForm.name}
+          onChange={handleEditChange}
+        />
+        <input
+          name="category"
+          className="input-field"
+          placeholder="Category"
+          value={editForm.category}
+          onChange={handleEditChange}
+        />
+        <input
+          type="number"
+          name="price"
+          className="input-field"
+          placeholder="Price"
+          value={editForm.price}
+          onChange={handleEditChange}
+        />
+        <input
+          type="number"
+          name="stock"
+          className="input-field"
+          placeholder="Stock"
+          value={editForm.stock}
+          onChange={handleEditChange}
+        />
+        <textarea
+          name="description"
+          className="input-field"
+          placeholder="Description"
+          value={editForm.description}
+          onChange={handleEditChange}
+        />
+        <input
+          name="features"
+          className="input-field"
+          placeholder="Features (comma separated)"
+          value={editForm.features}
+          onChange={handleEditChange}
+        />
+
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              setShowEditModal(false);
+              setEditingProduct(null);
+            }}
+            className="btn-secondary"
+          >
+            Cancel
+          </button>
+          <button className="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
 
         {/* UPLOAD MODAL */}
         {showUploadModal && (

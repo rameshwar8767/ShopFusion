@@ -4,3 +4,4 @@ pandas
 pymongo
 mlxtend
 python-dotenv
+# uvicorn app:app --reload --port 8000

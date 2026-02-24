@@ -63,7 +63,18 @@ router.post("/bulk", protect, bulkUploadProducts);
 router
   .route("/:id")
   .get(getProduct)
-  .put(updateProduct)
   .delete(deleteProduct);
+
+router.put(
+  "/:id",
+  [
+    body("name").notEmpty().withMessage("Product name is required"),
+    body("category").notEmpty().withMessage("Category is required"),
+    body("price")
+      .isNumeric()
+      .withMessage("Price must be a valid number"),
+  ],
+  updateProduct
+);
 
 module.exports = router;

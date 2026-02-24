@@ -166,7 +166,7 @@ exports.bulkUploadProducts = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findOneAndUpdate(
-      { productId: req.params.id, user: req.user.id }, // 🔐 ownership
+      { _id: req.params.id, user: req.user.id }, // ✅ Use MongoDB _id
       req.body,
       { new: true, runValidators: true }
     );
@@ -186,6 +186,7 @@ exports.updateProduct = async (req, res, next) => {
     next(error);
   }
 };
+
 
 /**
  * ========================================================

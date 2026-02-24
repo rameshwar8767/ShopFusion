@@ -5,12 +5,33 @@ import api from "../../services/api";
 // ================= GET TRANSACTIONS =================
 export const getTransactions = createAsyncThunk(
   "transactions/get",
-  async ({ page = 1, limit = 20, search = "" } = {}, thunkAPI) => {
+  async (
+    {
+      page = 1,
+      limit = 20,
+      search = "",
+      startDate,
+      endDate,
+      minAmount,
+      maxAmount,
+    } = {},
+    thunkAPI
+  ) => {
     try {
-      const res = await api.get("/transactions", {
-        params: { page, limit, search },
-      });
-      // controller: { success, data: transactions, pagination }
+      const params = {
+        page,
+        limit,
+        search,
+      };
+
+      // Only add filters if they exist
+      if (startDate) params.startDate = startDate;
+      if (endDate) params.endDate = endDate;
+      if (minAmount) params.minAmount = minAmount;
+      if (maxAmount) params.maxAmount = maxAmount;
+
+      const res = await api.get("/transactions", { params });
+
       return res.data;
     } catch (err) {
       return thunkAPI.rejectWithValue(

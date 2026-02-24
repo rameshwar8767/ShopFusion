@@ -3,41 +3,119 @@ const Transaction = require("../models/Transaction");
 const Product = require("../models/Product");
 const { validationResult } = require("express-validator");
 const mongoose = require('mongoose')
-// ✅ Retailer-scoped, searchable list
+
 exports.getTransactions = async (req, res, next) => {
   try {
-    const { page = 1, limit = 20, search = "" } = req.query;
+    const {
+      page = 1,
+      limit = 20,
+      search = "",
+      startDate,
+      endDate,
+      minAmount,
+      maxAmount,
+    } = req.query;
 
-    const query = { user: req.user.id }; // 🔐 scope to retailer
+    const query = {
+      user: req.user.id, // 🔐 Retailer scoped
+    };
 
-    if (search) {
+    // 🔍 SEARCH (transactionId OR shopperId)
+    if (search && search.trim() !== "") {
       const keyword = search.trim();
       query.$or = [
         { transactionId: { $regex: keyword, $options: "i" } },
-        { shopperId: { $regex: keyword, $options: "i" } }, // was customerId
+        { shopperId: { $regex: keyword, $options: "i" } },
       ];
     }
+
+    // 📅 DATE FILTER
+    if (startDate || endDate) {
+      query.timestamp = {};
+
+      if (startDate) {
+        query.timestamp.$gte = new Date(startDate);
+      }
+
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999); // include full day
+        query.timestamp.$lte = end;
+      }
+    }
+
+    // 💰 AMOUNT FILTER
+    if (minAmount || maxAmount) {
+      query.totalAmount = {};
+
+      if (minAmount) {
+        query.totalAmount.$gte = Number(minAmount);
+      }
+
+      if (maxAmount) {
+        query.totalAmount.$lte = Number(maxAmount);
+      }
+    }
+
+    const numericPage = Number(page);
+    const numericLimit = Number(limit);
+    const skip = (numericPage - 1) * numericLimit;
 
     const total = await Transaction.countDocuments(query);
 
     const transactions = await Transaction.find(query)
       .sort({ timestamp: -1 })
-      .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .skip(skip)
+      .limit(numericLimit);
 
     res.json({
       success: true,
       data: transactions,
       pagination: {
         total,
-        page: Number(page),
-        pages: Math.ceil(total / limit),
+        page: numericPage,
+        pages: Math.ceil(total / numericLimit),
       },
     });
   } catch (error) {
     next(error);
   }
 };
+// ✅ Retailer-scoped, searchable list
+// exports.getTransactions = async (req, res, next) => {
+//   try {
+//     const { page = 1, limit = 20, search = "" } = req.query;
+
+//     const query = { user: req.user.id }; // 🔐 scope to retailer
+
+//     if (search) {
+//       const keyword = search.trim();
+//       query.$or = [
+//         { transactionId: { $regex: keyword, $options: "i" } },
+//         { shopperId: { $regex: keyword, $options: "i" } }, // was customerId
+//       ];
+//     }
+
+//     const total = await Transaction.countDocuments(query);
+
+//     const transactions = await Transaction.find(query)
+//       .sort({ timestamp: -1 })
+//       .skip((page - 1) * limit)
+//       .limit(Number(limit));
+
+//     res.json({
+//       success: true,
+//       data: transactions,
+//       pagination: {
+//         total,
+//         page: Number(page),
+//         pages: Math.ceil(total / limit),
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 exports.getTransaction = async (req, res, next) => {
   try {
