@@ -56,6 +56,19 @@ export const getTransactionStats = createAsyncThunk(
     }
   }
 );
+export const getActiveClients = createAsyncThunk(
+  "transactions/getActiveClients",
+  async (_, thunkAPI) => {
+    try {
+      const response = await api.get("/transactions/customers");
+      // returns the data array directly to the fulfilled case
+      return response.data.data; 
+    } catch (error) {
+      const message = error.response?.data?.message || error.message;
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 // ================= CREATE TRANSACTION =================
 export const createTransaction = createAsyncThunk(
@@ -107,6 +120,7 @@ export const deleteTransaction = createAsyncThunk(
 // ================= INITIAL STATE =================
 const initialState = {
   transactions: [],
+  clients: [],
   transaction: null,
   stats: {
     overview: {
@@ -119,6 +133,7 @@ const initialState = {
     topProducts: [],
   },
   isLoading: false,
+  isClientLoading: false,
   isError: false,
   isSuccess: false,
   message: "",
@@ -136,6 +151,7 @@ const transactionSlice = createSlice({
   reducers: {
     reset: (state) => {
       state.isLoading = false;
+      state.isClientLoading = false;
       state.isSuccess = false;
       state.isError = false;
       state.message = "";
@@ -216,6 +232,20 @@ const transactionSlice = createSlice({
         state.pagination.total = Math.max(0, state.pagination.total - 1);
       })
       .addCase(deleteTransaction.rejected, (state, action) => {
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getActiveClients.pending, (state) => {
+        state.isClientLoading = true;
+        state.isError = false;
+      })
+      .addCase(getActiveClients.fulfilled, (state, action) => { // ✅ FIXED: Added 'action' parameter
+        state.isClientLoading = false;
+        state.isSuccess = true;
+        state.clients = action.payload || []; // ✅ FIXED: Saving to state
+      })
+      .addCase(getActiveClients.rejected, (state, action) => {
+        state.isClientLoading = false;
         state.isError = true;
         state.message = action.payload;
       });

@@ -19,6 +19,8 @@ import Products from "./pages/Products";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AdminDashboard from "./pages/AdminDashboard";
+import InventoryLog from "./pages/InventoryLogs";
+import ActiveClient from "./pages/ActiveClient";
 
 function App() {
   return (
@@ -45,6 +47,8 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/inventory-logs" element={<InventoryLog/>} />
+            <Route path="/customers" element={<ActiveClient/>} />
           </Route>
 
           {/* -------- FALLBACK -------- */}

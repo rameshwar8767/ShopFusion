@@ -240,3 +240,25 @@ exports.getCategories = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.restockProduct = async (req, res) => {
+  const { productId, amount } = req.body;
+
+  const product = await Product.findOne({ productId });
+  
+  // 1. Update the Product Stock
+  product.stock += amount;
+  await product.save();
+
+  // 2. Create the Audit Log
+  await InventoryLog.create({
+    user: req.user._id, // The person performing the restock
+    product: product._id,
+    changeType: "RESTOCK",
+    quantityChanged: amount,
+    stockAfter: product.stock,
+    note: "Manual warehouse restock"
+  });
+
+  res.status(200).json({ message: "Stock updated and logged" });
+};

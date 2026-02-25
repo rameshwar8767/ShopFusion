@@ -30,7 +30,10 @@ app.use(
     credentials: true,
   })
 );
+const inventoryLogRoutes = require("./routes/inventoryLogRoutes");
 
+// ... other middleware
+app.use("/api/inventory", inventoryLogRoutes);
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/products", require("./routes/productRoutes"));

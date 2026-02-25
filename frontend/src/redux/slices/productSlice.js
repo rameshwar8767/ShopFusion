@@ -58,7 +58,21 @@ export const getCategories = createAsyncThunk(
     }
   }
 );
-
+// ================= DELETE PRODUCT =================
+export const deleteProduct = createAsyncThunk(
+  "products/delete",
+  async (id, thunkAPI) => {
+    try {
+      const res = await api.delete(`/products/${id}`);
+      // Return the id so we can remove it from the state in the reducer
+      return { id, message: res.data.message };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to delete product"
+      );
+    }
+  }
+);
 // ================= CREATE PRODUCT =================
 export const createProduct = createAsyncThunk(
   "products/create",
@@ -186,6 +200,22 @@ const productSlice = createSlice({
   }
 })
 .addCase(updateProduct.rejected, (state, action) => {
+  state.isLoading = false;
+  state.isError = true;
+  state.message = action.payload;
+})
+.addCase(deleteProduct.pending, (state) => {
+  state.isLoading = true;
+})
+.addCase(deleteProduct.fulfilled, (state, action) => {
+  state.isLoading = false;
+  state.isSuccess = true;
+  // Remove the product from the local state list immediately
+  state.products = state.products.filter(
+    (product) => product._id !== action.payload.id
+  );
+})
+.addCase(deleteProduct.rejected, (state, action) => {
   state.isLoading = false;
   state.isError = true;
   state.message = action.payload;

@@ -9,6 +9,7 @@ const {
   bulkUploadTransactions,
   deleteTransaction,
   getTransactionStats,
+  getUniqueCustomers
 } = require("../controllers/transactionController");
 
 const { protect } = require("../middleware/auth");
@@ -25,7 +26,7 @@ router.use(protect);
 //   GET /api/transactions/stats
 // ======================================================
 router.get("/stats", protect, getTransactionStats);
-
+router.get("/customers", getUniqueCustomers);
 
 // ======================================================
 //   GET ALL TRANSACTIONS / CREATE TRANSACTION

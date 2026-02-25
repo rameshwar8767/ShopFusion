@@ -1,4 +1,3 @@
-// pages/Transactions.jsx
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,7 +6,7 @@ import {
   deleteTransaction,
 } from "../redux/slices/transactionSlice";
 import { toast } from "react-toastify";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FiUpload,
   FiTrash2,
@@ -15,10 +14,15 @@ import {
   FiFilter,
   FiDownload,
   FiPlus,
+  FiCalendar,
+  FiDollarSign,
+  FiFileText,
+  FiX,
 } from "react-icons/fi";
 import { format } from "date-fns";
 
 const Transactions = () => {
+  const [showAddPanel, setShowAddPanel] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -27,9 +31,21 @@ const Transactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const dispatch = useDispatch();
+  const [newTx, setNewTx] = useState({
+  shopperId: "",
+  items: [{ productId: "", price: "" }],
+});
+const addProductField = () => {
+  setNewTx({ ...newTx, items: [...newTx.items, { productId: "", price: "" }] });
+};
 
-    const { transactions, isLoading, pagination } = useSelector(
+const updateItem = (index, field, value) => {
+  const updatedItems = [...newTx.items];
+  updatedItems[index][field] = value;
+  setNewTx({ ...newTx, items: updatedItems });
+};
+  const dispatch = useDispatch();
+  const { transactions, isLoading, pagination } = useSelector(
     (state) => state.transactions
   );
 
@@ -45,44 +61,38 @@ const Transactions = () => {
         maxAmount,
       })
     );
-  }, [
-    dispatch,
-    currentPage,
-    searchTerm,
-    startDate,
-    endDate,
-    minAmount,
-    maxAmount,
-  ]);
+  }, [dispatch, currentPage, searchTerm, startDate, endDate, minAmount, maxAmount]);
+const handleManualSubmit = async (e) => {
+  e.preventDefault();
+  const totalAmount = newTx.items.reduce((sum, item) => sum + Number(item.price || 0), 0);
+  const finalPayload = {
+    ...newTx,
+    transactionId: `TXN-${Date.now().toString().slice(-6)}`,
+    totalAmount,
+    timestamp: new Date().toISOString()
+  };
 
-
-
-
-  // Fetch with page + search
-  useEffect(() => {
-    dispatch(
-      getTransactions({
-        page: currentPage,
-        limit: 20,
-        search: searchTerm,
-      })
-    );
-  }, [dispatch, currentPage, searchTerm]);
-
-  // Local filtering (uses schema fields: transactionId, shopperId)
+  try {
+    // Re-using your bulk upload slice for a single item array
+    await dispatch(bulkUploadTransactions([finalPayload])).unwrap();
+    toast.success("Transaction recorded!");
+    setShowAddPanel(false);
+    setNewTx({ shopperId: "", items: [{ productId: "", price: "" }] });
+    dispatch(getTransactions({ page: 1, limit: 20 }));
+  } catch (err) {
+    toast.error("Failed to save transaction");
+  }
+};
   const filteredTransactions = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) return transactions;
-    return transactions.filter((t) => {
-      return (
-        t.transactionId?.toLowerCase().includes(term) ||
-        t.shopperId?.toLowerCase().includes(term)
-      );
-    });
+    return transactions.filter((t) => 
+      t.transactionId?.toLowerCase().includes(term) ||
+      t.shopperId?.toLowerCase().includes(term)
+    );
   }, [transactions, searchTerm]);
 
-  // ---------------- BULK UPLOAD ----------------
-  const handleFileUpload = (e) => {
+  const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -90,400 +100,371 @@ const Transactions = () => {
     reader.onload = async (event) => {
       try {
         const parsed = JSON.parse(event.target.result);
+        const txns = Array.isArray(parsed) ? parsed : (parsed.transactions || [parsed]);
 
-        // Normalize to array of transaction objects
-        let txns;
-        if (Array.isArray(parsed)) {
-          txns = parsed;
-        } else if (Array.isArray(parsed.transactions)) {
-          txns = parsed.transactions;
-        } else {
-          txns = [parsed];
-        }
-
-        if (!txns.length) {
-          toast.error("No transactions found in JSON");
-          e.target.value = "";
-          return;
-        }
+        if (!txns.length) throw new Error("Empty file");
 
         await dispatch(bulkUploadTransactions(txns)).unwrap();
-        toast.success("Transactions uploaded successfully");
-
+        toast.success("Data synchronized successfully");
         setShowUploadModal(false);
         setCurrentPage(1);
-        setSearchTerm("");
-        dispatch(getTransactions({ page: 1, limit: 20, search: "" }));
       } catch (err) {
-        toast.error("Invalid JSON file");
-      } finally {
-        e.target.value = "";
+        toast.error("Invalid JSON format");
       }
     };
     reader.readAsText(file);
   };
 
-  // ---------------- DELETE ----------------
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this transaction?")) {
+    if (window.confirm("Delete this record permanently?")) {
       try {
         await dispatch(deleteTransaction(id)).unwrap();
-        toast.success("Transaction deleted successfully");
+        toast.success("Record removed");
       } catch (error) {
-        toast.error("Error deleting transaction");
+        toast.error("Operation failed");
       }
     }
   };
 
-  // ---------------- EXPORT CURRENT VIEW ----------------
   const handleExport = () => {
-    if (!filteredTransactions.length) {
-      toast.info("No transactions to export");
-      return;
-    }
-
     const dataStr = JSON.stringify(filteredTransactions, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
+    const link = document.body.appendChild(document.createElement("a"));
     link.href = url;
-    const ts = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
-    link.download = `transactions-export-${ts}.json`;
-    document.body.appendChild(link);
+    link.download = `SF-Export-${format(new Date(), "yyyy-MM-dd")}.json`;
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(url);
   };
 
   return (
-    <div className="bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50/50 pb-12">
+      {/* --- Page Header --- */}
+      <div className="bg-white border-b border-gray-100 mb-8 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-black text-gray-900 tracking-tight">
+                Transaction Ledger
+              </h1>
+              <p className="text-gray-500 text-sm mt-1 font-medium">
+                Review and audit real-time retail activity
+              </p>
+            </div>
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <button
+                onClick={() => setShowUploadModal(true)}
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-50 transition-all shadow-sm"
+              >
+                <FiUpload className="text-indigo-600" /> Bulk Import
+              </button>
+              <button 
+                onClick={() => setShowAddPanel(true)}
+                className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100"
+              >
+                <FiPlus /> New Entry
+              </button>
+            </div>
+          </div>
+        </div>
+        <AnimatePresence>
+  {showAddPanel && (
+    <>
+      {/* Backdrop */}
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        exit={{ opacity: 0 }}
+        onClick={() => setShowAddPanel(false)}
+        className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[70]" 
+      />
+      
+      {/* Side Panel */}
+      <motion.div 
+        initial={{ x: "100%" }} 
+        animate={{ x: 0 }} 
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-[80] overflow-y-auto"
+      >
+        <div className="p-8">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-black text-gray-900">Manual Entry</h2>
+            <button onClick={() => setShowAddPanel(false)} className="p-2 hover:bg-gray-100 rounded-full">
+              <FiX size={20} />
+            </button>
+          </div>
+
+          <form onSubmit={handleManualSubmit} className="space-y-6">
+            <div>
+              <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Shopper Identity</label>
+              <input 
+                required
+                type="text" 
+                placeholder="e.g. SHOP_99"
+                value={newTx.shopperId}
+                onChange={(e) => setNewTx({...newTx, shopperId: e.target.value})}
+                className="w-full mt-2 px-4 py-3 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-indigo-500 outline-none transition-all"
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex justify-between items-end">
+                <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest ml-1">Basket Contents</label>
+                <button type="button" onClick={addProductField} className="text-xs font-bold text-indigo-600 hover:text-indigo-800">+ Add Item</button>
+              </div>
+              
+              {newTx.items.map((item, index) => (
+                <div key={index} className="flex gap-2 animate-in fade-in slide-in-from-right-2">
+                  <input 
+                    required
+                    placeholder="Product ID"
+                    value={item.productId}
+                    onChange={(e) => updateItem(index, 'productId', e.target.value)}
+                    className="flex-1 px-4 py-2 bg-gray-50 border border-transparent rounded-lg text-sm outline-none focus:bg-white focus:border-indigo-500"
+                  />
+                  <input 
+                    required
+                    type="number"
+                    placeholder="Price"
+                    value={item.price}
+                    onChange={(e) => updateItem(index, 'price', e.target.value)}
+                    className="w-24 px-4 py-2 bg-gray-50 border border-transparent rounded-lg text-sm outline-none focus:bg-white focus:border-indigo-500"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-6 border-t border-gray-100">
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-sm font-bold text-gray-500">Total Calculation</span>
+                <span className="text-xl font-black text-gray-900">
+                  ${newTx.items.reduce((sum, item) => sum + Number(item.price || 0), 0).toFixed(2)}
+                </span>
+              </div>
+              <button 
+                type="submit"
+                className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all"
+              >
+                Finalize Transaction
+              </button>
+            </div>
+          </form>
+        </div>
+      </motion.div>
+    </>
+  )}
+</AnimatePresence>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
-        >
-          <div>
-            <h1 className="text-4xl font-bold gradient-text mb-2">
-              Transactions
-            </h1>
-            <p className="text-gray-600">
-              Manage and analyze your transaction data
-            </p>
-          </div>
-
-          <div className="flex space-x-3 mt-4 md:mt-0">
-            <button
-              onClick={() => setShowUploadModal(true)}
-              className="btn-secondary btn-sm flex items-center"
-            >
-              <FiUpload className="mr-2" />
-              Upload Data
-            </button>
-            <button
-              disabled
-              className="btn-primary btn-sm flex items-center opacity-60 cursor-not-allowed"
-            >
-              <FiPlus className="mr-2" />
-              Add Transaction
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Search and Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="card p-4 mb-6"
-        >
+        {/* --- Toolbar & Filters --- */}
+        <div className="mb-6 space-y-4">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <div className="flex-1 relative group">
+              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-indigo-500 transition-colors" />
               <input
                 type="text"
-                placeholder="Search by Transaction ID or Shopper ID..."
+                placeholder="Search by ID, Shopper, or Reference..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-field pl-10"
+                className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-2xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all shadow-sm text-sm"
               />
             </div>
-            {showFilters && (
-  <div className="card p-4 mt-4 animate-fade-in">
-    <div className="grid md:grid-cols-4 gap-4">
-
-      {/* Start Date */}
-      <div>
-        <label className="text-sm font-medium text-gray-600">
-          Start Date
-        </label>
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="input-field"
-        />
-      </div>
-
-      {/* End Date */}
-      <div>
-        <label className="text-sm font-medium text-gray-600">
-          End Date
-        </label>
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="input-field"
-        />
-      </div>
-
-      {/* Min Amount */}
-      <div>
-        <label className="text-sm font-medium text-gray-600">
-          Min Amount
-        </label>
-        <input
-          type="number"
-          placeholder="0"
-          value={minAmount}
-          onChange={(e) => setMinAmount(e.target.value)}
-          className="input-field"
-        />
-      </div>
-
-      {/* Max Amount */}
-      <div>
-        <label className="text-sm font-medium text-gray-600">
-          Max Amount
-        </label>
-        <input
-          type="number"
-          placeholder="10000"
-          value={maxAmount}
-          onChange={(e) => setMaxAmount(e.target.value)}
-          className="input-field"
-        />
-      </div>
-
-    </div>
-
-    {/* Clear Button */}
-      {/* Actions: Apply + Clear */}
-<div className="flex justify-end mt-4 space-x-3">
-  <button
-    onClick={() => {
-      // Filters are already bound to state,
-      // so just close the section
-      setShowFilters(false);
-      setCurrentPage(1); // optional: reset to first page
-    }}
-    className="btn-primary btn-sm"
-  >
-    Apply Filters
-  </button>
-
-  <button
-    onClick={() => {
-      setStartDate("");
-      setEndDate("");
-      setMinAmount("");
-      setMaxAmount("");
-      setSearchTerm("");
-      setCurrentPage(1); 
-      setShowFilters(false);// optional: reset page
-    }}
-    className="btn-secondary btn-sm"
-  >
-    Clear Filters
-  </button>
-</div>
-
-  </div>
-)}
-            {/* <button
-              onClick={() =>
-                toast.info("Advanced filters can be added here later")
-              }
-              className="btn-secondary btn-sm flex items-center justify-center"
-            >
-              <FiFilter className="mr-2" />
-              Filters
-            </button> */}
-            <button
-              onClick={() => setShowFilters((prev) => !prev)}
-              className="btn-secondary btn-sm flex items-center justify-center"
-            >
-              <FiFilter className="mr-2" />
-              Filters
-            </button>
-            <button
-              onClick={handleExport}
-              className="btn-secondary btn-sm flex items-center justify-center"
-            >
-              <FiDownload className="mr-2" />
-              Export
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all ${
+                  showFilters ? "bg-indigo-600 text-white" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                }`}
+              >
+                <FiFilter /> Filters
+              </button>
+              <button
+                onClick={handleExport}
+                className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-2xl text-gray-600 font-bold text-sm hover:bg-gray-50 transition-all shadow-sm"
+              >
+                <FiDownload /> Export
+              </button>
+            </div>
           </div>
-        </motion.div>
 
-        {/* Transactions Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="card overflow-hidden"
-        >
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="bg-white border border-indigo-100 rounded-2xl p-6 shadow-xl shadow-indigo-500/5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+              >
+                <FilterInput label="Start Date" type="date" value={startDate} onChange={setStartDate} icon={FiCalendar} />
+                <FilterInput label="End Date" type="date" value={endDate} onChange={setEndDate} icon={FiCalendar} />
+                <FilterInput label="Min Amount" type="number" value={minAmount} onChange={setMinAmount} icon={FiDollarSign} />
+                <FilterInput label="Max Amount" type="number" value={maxAmount} onChange={setMaxAmount} icon={FiDollarSign} />
+                <div className="sm:col-span-2 lg:col-span-4 flex justify-end gap-3 pt-2 border-t border-gray-50">
+                  <button onClick={() => { setStartDate(""); setEndDate(""); setMinAmount(""); setMaxAmount(""); }} className="text-sm font-bold text-gray-400 hover:text-gray-600 px-4">Reset All</button>
+                  <button onClick={() => setShowFilters(false)} className="bg-indigo-50 text-indigo-700 px-6 py-2 rounded-xl font-bold text-sm hover:bg-indigo-100">Apply View</button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* --- Table Section --- */}
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="spinner" />
-              <span className="ml-3 text-gray-600">
-                Loading transactions...
-              </span>
+            <div className="py-24 flex flex-col items-center">
+              <div className="h-12 w-12 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin mb-4" />
+              <p className="text-gray-400 font-bold text-sm animate-pulse">Syncing database...</p>
             </div>
           ) : filteredTransactions.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No transactions found</p>
+            <div className="py-24 text-center">
+              <div className="bg-gray-50 h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <FiFileText size={24} className="text-gray-300" />
+              </div>
+              <p className="text-gray-500 font-bold">No records match your criteria</p>
             </div>
           ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="table">
-                  <thead className="table-header">
-                    <tr>
-                      <th className="table-th">Transaction ID</th>
-                      <th className="table-th">Shopper ID</th>
-                      <th className="table-th">Items</th>
-                      <th className="table-th">Total Amount</th>
-                      <th className="table-th">Date</th>
-                      <th className="table-th">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredTransactions.map((transaction, index) => (
-                      <motion.tr
-                        key={transaction._id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="table-row"
-                      >
-                        <td className="table-td font-medium text-primary-600">
-                          {transaction.transactionId}
-                        </td>
-                        <td className="table-td">
-                          {transaction.shopperId}
-                        </td>
-                        <td className="table-td">
-                          <div className="flex flex-wrap gap-1">
-                            {transaction.items.slice(0, 3).map((item, idx) => (
-                              <span
-                                key={idx}
-                                className="badge badge-info text-xs"
-                              >
-                                {item.productId}
-                              </span>
-                            ))}
-                            {transaction.items.length > 3 && (
-                              <span className="badge badge-info text-xs">
-                                +{transaction.items.length - 3}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="table-td font-semibold text-green-600">
-                          ${Number(transaction.totalAmount || 0).toFixed(2)}
-                        </td>
-                        <td className="table-td text-gray-600">
-                          {transaction.timestamp
-                            ? format(
-                                new Date(transaction.timestamp),
-                                "MMM dd, yyyy"
-                              )
-                            : "-"}
-                        </td>
-                        <td className="table-td">
-                          <button
-                            onClick={() => handleDelete(transaction._id)}
-                            className="text-red-600 hover:text-red-800 transition-colors duration-200"
-                          >
-                            <FiTrash2 className="h-5 w-5" />
-                          </button>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Pagination */}
-              {pagination.pages > 1 && (
-                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                  <p className="text-sm text-gray-600">
-                    Showing {filteredTransactions.length} of{" "}
-                    {pagination.total} transactions
-                  </p>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setCurrentPage(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="btn-secondary btn-sm"
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-gray-50/50">
+                    <th className="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-widest">Transaction Ref</th>
+                    <th className="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-widest">Customer ID</th>
+                    <th className="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-widest">Basket Items</th>
+                    <th className="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-widest">Revenue</th>
+                    <th className="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-widest">Post Date</th>
+                    <th className="px-6 py-4 text-[11px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {filteredTransactions.map((tx, idx) => (
+                    <motion.tr 
+                      key={tx._id}
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: idx * 0.03 }}
+                      className="hover:bg-indigo-50/30 transition-colors group"
                     >
-                      Previous
-                    </button>
-                    <span className="px-4 py-2 text-gray-700">
-                      Page {pagination.page} of {pagination.pages}
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage(currentPage + 1)}
-                      disabled={currentPage === pagination.pages}
-                      className="btn-secondary btn-sm"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
+                      <td className="px-6 py-4">
+                        <span className="font-mono text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">
+                          #{tx.transactionId}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-bold text-gray-700">{tx.shopperId}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex -space-x-2">
+                          {tx.items.slice(0, 3).map((item, i) => (
+                            <div key={i} title={item.productId} className="h-7 w-7 rounded-full bg-white border border-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-500 shadow-sm">
+                              {item.productId.charAt(0)}
+                            </div>
+                          ))}
+                          {tx.items.length > 3 && (
+                            <div className="h-7 w-7 rounded-full bg-indigo-600 flex items-center justify-center text-[10px] font-bold text-white border border-white">
+                              +{tx.items.length - 3}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-sm font-black text-gray-900">
+                          ${Number(tx.totalAmount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 font-medium">
+                        {tx.timestamp ? format(new Date(tx.timestamp), "MMM dd, yyyy") : "—"}
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <button 
+                          onClick={() => handleDelete(tx._id)}
+                          className="p-2 text-gray-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                          <FiTrash2 size={18} />
+                        </button>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
-        </motion.div>
-
-        {/* Upload Modal */}
-        {showUploadModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="card p-6 max-w-md w-full mx-4"
-            >
-              <h3 className="text-xl font-semibold mb-4">
-                Upload Transaction Data
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Upload a JSON file containing your transaction data
+          
+          {/* --- Pagination Footer --- */}
+          {pagination.pages > 1 && (
+            <div className="bg-white px-6 py-4 border-t border-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-tighter">
+                Showing {filteredTransactions.length} of {pagination.total} entries
               </p>
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileUpload}
-                className="input-field mb-4"
-              />
-              <div className="flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowUploadModal(false)}
-                  className="btn-secondary btn-sm"
-                >
-                  Cancel
-                </button>
+              <div className="flex items-center gap-1">
+                <PageBtn onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} label="Prev" />
+                <div className="px-4 py-1.5 rounded-lg bg-gray-50 text-xs font-black text-gray-600 border border-gray-100">
+                  {currentPage} / {pagination.pages}
+                </div>
+                <PageBtn onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === pagination.pages} label="Next" />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* --- Import Modal --- */}
+      <AnimatePresence>
+        {showUploadModal && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowUploadModal(false)} className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl"
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div className="h-12 w-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
+                  <FiUpload size={24} />
+                </div>
+                <button onClick={() => setShowUploadModal(false)} className="text-gray-400 hover:text-gray-600"><FiX size={20} /></button>
+              </div>
+              <h3 className="text-xl font-black text-gray-900 mb-2">Sync Transaction Data</h3>
+              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+                Upload your localized JSON export to synchronize with the ShopFusion analytics engine.
+              </p>
+              <div className="border-2 border-dashed border-gray-100 rounded-2xl p-8 text-center hover:border-indigo-200 transition-colors cursor-pointer group relative">
+                <input type="file" accept=".json" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                <FiFileText className="mx-auto text-gray-300 group-hover:text-indigo-400 mb-2" size={32} />
+                <p className="text-xs font-bold text-gray-400 uppercase">Click to browse .json</p>
               </div>
             </motion.div>
           </div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   );
 };
+
+/* --- Sub-components to keep code clean --- */
+const FilterInput = ({ label, type, value, onChange, icon: Icon }) => (
+  <div className="space-y-2">
+    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</label>
+    <div className="relative">
+      <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={14} />
+      <input 
+        type={type} 
+        value={value} 
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-transparent rounded-xl text-sm focus:bg-white focus:border-indigo-500 outline-none transition-all"
+      />
+    </div>
+  </div>
+);
+
+const PageBtn = ({ onClick, disabled, label }) => (
+  <button
+    disabled={disabled}
+    onClick={onClick}
+    className="px-4 py-1.5 rounded-lg text-xs font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 shadow-sm"
+  >
+    {label}
+  </button>
+);
 
 export default Transactions;
