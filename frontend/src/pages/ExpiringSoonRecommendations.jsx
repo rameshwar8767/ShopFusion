@@ -1,85 +1,84 @@
-// pages/ExpiringSoonRecommendations.jsx
-import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
+import React from 'react';
 
-const ExpiringSoonRecommendations = () => {
-  const { urgentBundles = [] } = useSelector(
-    (state) => state.recommendations || {}
-  );
-
+const ExpiringSoonRecommendations = ({ inventoryData = [] }) => {
+  
+  // Days left calculate karne ka function
   const getDaysLeft = (expiryDate) => {
-    if (!expiryDate) return null;
-    const now = new Date();
-    const exp = new Date(expiryDate);
-    const diff = (exp - now) / (1000 * 60 * 60 * 24);
-    return Math.ceil(diff);
+    const today = new Date();
+    const expiry = new Date(expiryDate);
+    const diffTime = expiry - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   };
 
-  // Flatten all products from urgentBundles, compute daysLeft, de‑duplicate
-  const expiringProducts = useMemo(() => {
-    const map = new Map(); // productId -> { productId, name, daysLeft }
-
-    (urgentBundles || []).forEach((bundle) => {
-      (bundle.products || []).forEach((item) => {
-        const daysLeft = getDaysLeft(item.expiryDate);
-        if (daysLeft == null || daysLeft < 0) return; // skip expired / no date
-
-        const existing = map.get(item.productId);
-        // keep the one with the minimum daysLeft (most urgent)
-        if (!existing || daysLeft < existing.daysLeft) {
-          map.set(item.productId, {
-            productId: item.productId,
-            name: item.name,
-            daysLeft,
-          });
-        }
-      });
-    });
-
-    // sort by urgency: least days first
-    return Array.from(map.values()).sort((a, b) => a.daysLeft - b.daysLeft);
-  }, [urgentBundles]);
-
-  if (!expiringProducts.length) {
+  if (!inventoryData || inventoryData.length === 0) {
     return (
-      <div>
-        <h3 className="text-lg font-semibold mb-3 text-red-600">
-          Expiring Soon – Sell Now
-        </h3>
-        <p className="text-sm text-gray-500">
-          No near-expiry products detected right now.
-        </p>
+      <div className="flex flex-col items-center justify-center py-10 opacity-40">
+        <p className="text-xs font-bold tracking-widest uppercase">Safe Zone</p>
+        <p className="text-[10px]">No immediate expiries detected</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <h3 className="text-lg font-semibold mb-3 text-red-600">
-        Expiring Soon – Sell Now
-      </h3>
-      <div className="space-y-2">
-        {expiringProducts.slice(0, 6).map((p) => (
-          <div
-            key={p.productId}
-            className="flex items-center justify-between rounded-lg border border-red-200 bg-red-50 px-3 py-2"
+    <div className="space-y-3">
+      {inventoryData.map((product) => {
+        const daysLeft = getDaysLeft(product.expiryDate);
+        const isUrgent = daysLeft <= 3;
+
+        return (
+          <div 
+            key={product._id} 
+            className="group relative flex items-center justify-between p-4 bg-white/5 rounded-[2rem] border border-white/5 hover:bg-white/10 transition-all overflow-hidden"
           >
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold text-gray-900">
-                {p.name}
-              </span>
-              <span className="text-[11px] text-gray-500">
-                {p.productId}
-              </span>
+            {/* Background Glow for Urgent Items */}
+            {isUrgent && (
+              <div className="absolute inset-0 bg-rose-500/5 animate-pulse pointer-events-none" />
+            )}
+
+            <div className="flex items-center gap-4 relative z-10">
+              {/* Product Initial Circle */}
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-lg shadow-inner ${
+                isUrgent ? 'bg-rose-500 text-white' : 'bg-slate-800 text-slate-400'
+              }`}>
+                {product.name?.charAt(0) || 'P'}
+              </div>
+
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-black text-white group-hover:text-rose-400 transition-colors">
+                    {product.name}
+                  </span>
+                  <span className="text-[9px] font-bold px-2 py-0.5 bg-white/10 rounded-md text-slate-400 uppercase tracking-tighter">
+                    ID: {product._id?.slice(-6) || 'N/A'}
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${
+                    isUrgent ? 'text-rose-400' : 'text-emerald-400'
+                  }`}>
+                    {daysLeft <= 0 ? "Expired" : `${daysLeft} Days Left`}
+                  </span>
+                  <span className="text-white/20">|</span>
+                  <span className="text-[10px] text-slate-500 font-bold">
+                    Stock: {product.stock || 0}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="text-right">
-              <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-1 text-[11px] font-semibold text-red-700">
-                {p.daysLeft} day{p.daysLeft !== 1 ? "s" : ""} left
-              </span>
-            </div>
+
+            {/* Action Button */}
+            <button className={`relative z-10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-90 ${
+              isUrgent 
+              ? 'bg-rose-600 text-white shadow-lg shadow-rose-900/20 hover:bg-rose-500' 
+              : 'bg-white/10 text-white hover:bg-white/20'
+            }`}>
+              {isUrgent ? 'Clearance' : 'Manage'}
+            </button>
           </div>
-        ))}
-      </div>
+        );
+      })}
     </div>
   );
 };

@@ -78,11 +78,13 @@ export const getCrossSelling = createAsyncThunk(
 );
 
 // ================= INVENTORY =================
+// ================= INVENTORY =================
 export const getInventoryOptimization = createAsyncThunk(
   "recommendations/getInventory",
   async (_, thunkAPI) => {
     try {
-      const res = await api.post("/recommendations/inventory");
+      // FIX: Changed from .post to .get to match backend router.get
+      const res = await api.get("/recommendations/inventory"); 
       return res.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -196,26 +198,31 @@ const recommendationSlice = createSlice({
       // ---------- DASHBOARD ----------
       .addCase(getDashboard.pending, (state) => {
         state.isLoading = true;
+        state.isError = false;
       })
 .addCase(getDashboard.fulfilled, (state, action) => {
   state.isLoading = false;
   state.isSuccess = true;
 
-  const dashboard = action.payload?.data || action.payload || null;
-  state.dashboard = dashboard;
+  const payload = action.payload?.data || {};
+  state.dashboard = payload;
 
-  if (dashboard?.bundles) {
-    state.bundles = dashboard.bundles;
-    state.urgentBundles = dashboard.bundles.filter(
-      (b) => b.metadata?.nearExpiryInBundle
-    );
+  // AGAR payload mein bundles/near_expiry hai tabhi update karo
+  // Warna purana data (jo individual API calls se aaya) rehne do
+  if (payload.near_expiry) {
+    state.inventory = payload.near_expiry;
   }
-})
+  
+  if (payload.bundles) {
+    state.bundles = payload.bundles;
+  }
 
+  console.log("Dashboard Updated with:", payload);
+})
       .addCase(getDashboard.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.message = action.payload;
+        state.message = action.payload || "Failed to load dashboard data";
       });
   },
 });

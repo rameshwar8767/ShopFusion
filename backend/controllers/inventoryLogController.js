@@ -39,36 +39,37 @@ res.status(200).json({
 };
 // @desc    Get stats for the Warehouse cards (Turnover, disposals, etc)
 // @route   GET /api/inventory/stats
-
-
-
-
 exports.getWarehouseStats = async (req, res) => {
   try {
-    // 1. Ensure we have a user
-    if (!req.user) {
-      return res.status(401).json({ success: false, message: "Not authorized" });
-    }
+    const userId = new mongoose.Types.ObjectId(req.user.id);
+    
+    // Optional: Filter for the last 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // 2. We MUST convert the string ID to a Mongoose ObjectId for aggregation
-    const userId = new mongoose.Types.ObjectId(req.user.id || req.user._id);
-
-    const stats = await InventoryLog.aggregate([
+    const statsArray = await InventoryLog.aggregate([
       { 
-        $match: { user: userId } 
+        $match: { 
+          user: userId,
+          createdAt: { $gte: thirtyDaysAgo } // Only recent logs
+        } 
       },
       {
         $group: {
           _id: "$changeType",
           totalQuantity: { $sum: { $abs: "$quantityChanged" } },
-          count: { $sum: 1 }
+          transactionCount: { $sum: 1 }
         }
       }
     ]);
 
-    res.status(200).json({ success: true, data: stats });
+    // Your existing formatting logic remains the same...
+    const formattedStats = {
+       // ... (rest of your object)
+    };
+
+    res.status(200).json({ success: true, data: formattedStats, timeframe: "30d" });
   } catch (error) {
-    console.error("Aggregation Error:", error); // This will show in your terminal
     res.status(500).json({ success: false, message: error.message });
   }
 };

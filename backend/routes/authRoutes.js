@@ -42,7 +42,7 @@ router.post("/login", login);
 router.get("/me", protect, getMe);
 
 // Update name/email
-router.put("/updatedetails", protect, updateDetails);
+router.put("/update-profile", protect, updateDetails);
 
 // Update password
 router.put("/updatepassword", protect, updatePassword);

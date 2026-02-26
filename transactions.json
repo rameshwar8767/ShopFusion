@@ -1,186 +1,22 @@
 [
-  {
-    "transactionId": "T2001",
-    "shopperId": "SHP001",
-    "items": [
-      { "productId": "P1001", "productName": "Amul Full Cream Milk", "quantity": 2, "price": 32 },
-      { "productId": "P1002", "productName": "Paneer 200g", "quantity": 1, "price": 90 }
-    ],
-    "totalAmount": 154,
-    "timestamp": "2026-02-01T10:15:00Z"
-  },
-  {
-    "transactionId": "T2002",
-    "shopperId": "SHP002",
-    "items": [
-      { "productId": "P1004", "productName": "iPhone 14", "quantity": 1, "price": 69999 }
-    ],
-    "totalAmount": 69999,
-    "timestamp": "2026-02-01T11:20:00Z"
-  },
-  {
-    "transactionId": "T2003",
-    "shopperId": "SHP003",
-    "items": [
-      { "productId": "P1007", "productName": "Basmati Rice 5kg", "quantity": 1, "price": 650 },
-      { "productId": "P1008", "productName": "Toor Dal 1kg", "quantity": 2, "price": 180 }
-    ],
-    "totalAmount": 1010,
-    "timestamp": "2026-02-02T09:40:00Z"
-  },
-  {
-    "transactionId": "T2004",
-    "shopperId": "SHP001",
-    "items": [
-      { "productId": "P1010", "productName": "Men Cotton T-Shirt", "quantity": 2, "price": 499 }
-    ],
-    "totalAmount": 998,
-    "timestamp": "2026-02-02T13:05:00Z"
-  },
-  {
-    "transactionId": "T2005",
-    "shopperId": "SHP004",
-    "items": [
-      { "productId": "P1006", "productName": "Bluetooth Headphones", "quantity": 1, "price": 1999 }
-    ],
-    "totalAmount": 1999,
-    "timestamp": "2026-02-03T15:30:00Z"
-  },
-  {
-    "transactionId": "T2006",
-    "shopperId": "SHP005",
-    "items": [
-      { "productId": "P1016", "productName": "Shampoo 340ml", "quantity": 2, "price": 210 },
-      { "productId": "P1017", "productName": "Bath Soap Pack", "quantity": 1, "price": 120 }
-    ],
-    "totalAmount": 540,
-    "timestamp": "2026-02-03T18:00:00Z"
-  },
-  {
-    "transactionId": "T2007",
-    "shopperId": "SHP002",
-    "items": [
-      { "productId": "P1013", "productName": "Wooden Study Table", "quantity": 1, "price": 5499 }
-    ],
-    "totalAmount": 5499,
-    "timestamp": "2026-02-04T10:10:00Z"
-  },
-  {
-    "transactionId": "T2008",
-    "shopperId": "SHP006",
-    "items": [
-      { "productId": "P1018", "productName": "Notebook A4", "quantity": 5, "price": 60 },
-      { "productId": "P1019", "productName": "Ball Pen Pack", "quantity": 2, "price": 90 }
-    ],
-    "totalAmount": 480,
-    "timestamp": "2026-02-04T12:45:00Z"
-  },
-  {
-    "transactionId": "T2009",
-    "shopperId": "SHP007",
-    "items": [
-      { "productId": "P1005", "productName": "Samsung 43 Inch Smart TV", "quantity": 1, "price": 28999 }
-    ],
-    "totalAmount": 28999,
-    "timestamp": "2026-02-05T09:30:00Z"
-  },
-  {
-    "transactionId": "T2010",
-    "shopperId": "SHP003",
-    "items": [
-      { "productId": "P1009", "productName": "Cooking Oil 1L", "quantity": 3, "price": 160 }
-    ],
-    "totalAmount": 480,
-    "timestamp": "2026-02-05T14:00:00Z"
-  },
-  {
-    "transactionId": "T2011",
-    "shopperId": "SHP008",
-    "items": [
-      { "productId": "P1020", "productName": "Organic Honey 500g", "quantity": 1, "price": 350 }
-    ],
-    "totalAmount": 350,
-    "timestamp": "2026-02-06T10:20:00Z"
-  },
-  {
-    "transactionId": "T2012",
-    "shopperId": "SHP001",
-    "items": [
-      { "productId": "P1003", "productName": "Butter 100g", "quantity": 3, "price": 55 }
-    ],
-    "totalAmount": 165,
-    "timestamp": "2026-02-06T16:45:00Z"
-  },
-  {
-    "transactionId": "T2013",
-    "shopperId": "SHP009",
-    "items": [
-      { "productId": "P1011", "productName": "Women Denim Jeans", "quantity": 1, "price": 1299 }
-    ],
-    "totalAmount": 1299,
-    "timestamp": "2026-02-07T11:15:00Z"
-  },
-  {
-    "transactionId": "T2014",
-    "shopperId": "SHP010",
-    "items": [
-      { "productId": "P1012", "productName": "Sports Shoes", "quantity": 1, "price": 2499 }
-    ],
-    "totalAmount": 2499,
-    "timestamp": "2026-02-07T18:10:00Z"
-  },
-  {
-    "transactionId": "T2015",
-    "shopperId": "SHP004",
-    "items": [
-      { "productId": "P1015", "productName": "LED Table Lamp", "quantity": 2, "price": 899 }
-    ],
-    "totalAmount": 1798,
-    "timestamp": "2026-02-08T09:00:00Z"
-  },
-  {
-    "transactionId": "T2016",
-    "shopperId": "SHP006",
-    "items": [
-      { "productId": "P1007", "productName": "Basmati Rice 5kg", "quantity": 2, "price": 650 }
-    ],
-    "totalAmount": 1300,
-    "timestamp": "2026-02-08T13:25:00Z"
-  },
-  {
-    "transactionId": "T2017",
-    "shopperId": "SHP002",
-    "items": [
-      { "productId": "P1006", "productName": "Bluetooth Headphones", "quantity": 2, "price": 1999 }
-    ],
-    "totalAmount": 3998,
-    "timestamp": "2026-02-09T10:40:00Z"
-  },
-  {
-    "transactionId": "T2018",
-    "shopperId": "SHP005",
-    "items": [
-      { "productId": "P1001", "productName": "Amul Full Cream Milk", "quantity": 5, "price": 32 }
-    ],
-    "totalAmount": 160,
-    "timestamp": "2026-02-09T17:30:00Z"
-  },
-  {
-    "transactionId": "T2019",
-    "shopperId": "SHP008",
-    "items": [
-      { "productId": "P1018", "productName": "Notebook A4", "quantity": 10, "price": 60 }
-    ],
-    "totalAmount": 600,
-    "timestamp": "2026-02-10T12:00:00Z"
-  },
-  {
-    "transactionId": "T2020",
-    "shopperId": "SHP010",
-    "items": [
-      { "productId": "P1002", "productName": "Paneer 200g", "quantity": 3, "price": 90 }
-    ],
-    "totalAmount": 270,
-    "timestamp": "2026-02-10T18:45:00Z"
-  }
+  { "transactionId": "TXN-1001", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-20T10:30:00Z", "items": [{ "productId": "DAI-001", "productRef": "65e1234567890abcdef00001", "productName": "Amul Taaza Milk", "quantity": 2, "price": 72 }, { "productId": "DAI-003", "productRef": "65e1234567890abcdef00010", "productName": "Britannia Brown Bread", "quantity": 1, "price": 50 }] },
+  { "transactionId": "TXN-1002", "shopperId": "SHOP_BETA_02", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-20T11:15:00Z", "items": [{ "productId": "ELE-002", "productRef": "65e1234567890abcdef00006", "productName": "Dell Vostro Laptop", "quantity": 1, "price": 55000 }, { "productId": "ELE-001", "productRef": "65e1234567890abcdef00002", "productName": "Logitech K380 Keyboard", "quantity": 1, "price": 2495 }] },
+  { "transactionId": "TXN-1003", "shopperId": "SHOP_GAMMA_03", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-21T09:00:00Z", "items": [{ "productId": "PER-001", "productRef": "65e1234567890abcdef00003", "productName": "Colgate MaxFresh", "quantity": 1, "price": 150 }, { "productId": "PER-002", "productRef": "65e1234567890abcdef00011", "productName": "Oral-B Toothbrush", "quantity": 2, "price": 60 }] },
+  { "transactionId": "TXN-1004", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-22T08:45:00Z", "items": [{ "productId": "DAI-004", "productRef": "65e1234567890abcdef00013", "productName": "Amul Butter", "quantity": 1, "price": 275 }, { "productId": "DAI-002", "productRef": "65e1234567890abcdef00005", "productName": "Mother Dairy Paneer", "quantity": 2, "price": 95 }] },
+  { "transactionId": "TXN-1005", "shopperId": "SHOP_DELTA_04", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-22T14:20:00Z", "items": [{ "productId": "FAS-001", "productRef": "65e1234567890abcdef00007", "productName": "Nike Revolution 6", "quantity": 1, "price": 3695 }, { "productId": "CLO-001", "productRef": "65e1234567890abcdef00009", "productName": "Levi's Men's T-Shirt", "quantity": 2, "price": 999 }] },
+  { "transactionId": "TXN-1006", "shopperId": "SHOP_EPSILON_05", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-23T18:10:00Z", "items": [{ "productId": "SNK-003", "productRef": "65e1234567890abcdef00027", "productName": "Maggi 2-Minute Noodles", "quantity": 5, "price": 96 }, { "productId": "SNK-002", "productRef": "65e1234567890abcdef00019", "productName": "Lays Classic Salted", "quantity": 3, "price": 20 }] },
+  { "transactionId": "TXN-1007", "shopperId": "SHOP_BETA_02", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-24T12:00:00Z", "items": [{ "productId": "ELE-005", "productRef": "65e1234567890abcdef00021", "productName": "Samsung S24 Ultra", "quantity": 1, "price": 129999 }, { "productId": "ELE-010", "productRef": "65e1234567890abcdef00041", "productName": "Mi Power Bank 3i", "quantity": 1, "price": 1299 }] },
+  { "transactionId": "TXN-1008", "shopperId": "SHOP_ZETA_06", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-24T15:30:00Z", "items": [{ "productId": "PER-004", "productRef": "65e1234567890abcdef00028", "productName": "Dove Shampoo", "quantity": 1, "price": 350 }, { "productId": "HOM-001", "productRef": "65e1234567890abcdef00004", "productName": "Surf Excel Matic", "quantity": 1, "price": 750 }] },
+  { "transactionId": "TXN-1009", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-25T07:30:00Z", "items": [{ "productId": "DAI-001", "productRef": "65e1234567890abcdef00001", "productName": "Amul Taaza Milk", "quantity": 3, "price": 72 }, { "productId": "DAI-011", "productRef": "65e1234567890abcdef00045", "productName": "Yakult Probiotic", "quantity": 1, "price": 85 }] },
+  { "transactionId": "TXN-1010", "shopperId": "SHOP_GAMMA_03", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-25T19:45:00Z", "items": [{ "productId": "DAI-007", "productRef": "65e1234567890abcdef00026", "productName": "Amul Cheese Slices", "quantity": 2, "price": 160 }, { "productId": "SNK-001", "productRef": "65e1234567890abcdef00008", "productName": "Oreo Biscuits", "quantity": 4, "price": 40 }] },
+  { "transactionId": "TXN-1011", "shopperId": "SHOP_ETA_07", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T10:00:00Z", "items": [{ "productId": "ELE-004", "productRef": "65e1234567890abcdef00015", "productName": "Sony WH-1000XM5", "quantity": 1, "price": 29990 }] },
+  { "transactionId": "TXN-1012", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T11:00:00Z", "items": [{ "productId": "DAI-012", "productRef": "65e1234567890abcdef00050", "productName": "Govind Toned Milk", "quantity": 2, "price": 54 }] },
+  { "transactionId": "TXN-1013", "shopperId": "SHOP_DELTA_04", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T14:30:00Z", "items": [{ "productId": "FAS-002", "productRef": "65e1234567890abcdef00016", "productName": "Adidas Ultraboost", "quantity": 1, "price": 17999 }] },
+  { "transactionId": "TXN-1014", "shopperId": "SHOP_THETA_08", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T16:00:00Z", "items": [{ "productId": "HOM-005", "productRef": "65e1234567890abcdef00043", "productName": "Lizol Disinfectant", "quantity": 1, "price": 380 }, { "productId": "HOM-003", "productRef": "65e1234567890abcdef00023", "productName": "Harpic Toilet Cleaner", "quantity": 1, "price": 180 }] },
+  { "transactionId": "TXN-1015", "shopperId": "SHOP_BETA_02", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T17:20:00Z", "items": [{ "productId": "ELE-009", "productRef": "65e1234567890abcdef00037", "productName": "SanDisk 128GB Flash Drive", "quantity": 2, "price": 899 }] },
+  { "transactionId": "TXN-1016", "shopperId": "SHOP_IOTA_09", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T18:00:00Z", "items": [{ "productId": "SNK-005", "productRef": "65e1234567890abcdef00046", "productName": "Ferrero Rocher", "quantity": 1, "price": 895 }] },
+  { "transactionId": "TXN-1017", "shopperId": "SHOP_KAPPA_10", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T19:00:00Z", "items": [{ "productId": "CLO-006", "productRef": "65e1234567890abcdef00049", "productName": "Jack & Jones Hoodie", "quantity": 1, "price": 2999 }, { "productId": "FAS-004", "productRef": "65e1234567890abcdef00038", "productName": "Crocs Classic Clog", "quantity": 1, "price": 2995 }] },
+  { "transactionId": "TXN-1018", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T20:00:00Z", "items": [{ "productId": "DAI-001", "productRef": "65e1234567890abcdef00001", "productName": "Amul Taaza Milk", "quantity": 1, "price": 72 }, { "productId": "SNK-004", "productRef": "65e1234567890abcdef00035", "productName": "Haldiram's Bhujia", "quantity": 1, "price": 100 }] },
+  { "transactionId": "TXN-1019", "shopperId": "SHOP_ZETA_06", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T21:00:00Z", "items": [{ "productId": "PER-005", "productRef": "65e1234567890abcdef00039", "productName": "Gillete Mach 3 Razor", "quantity": 1, "price": 450 }] },
+  { "transactionId": "TXN-1020", "shopperId": "SHOP_BETA_02", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T22:00:00Z", "items": [{ "productId": "ELE-012", "productRef": "65e1234567890abcdef00048", "productName": "Fire-Boltt Smartwatch", "quantity": 1, "price": 1799 }] }
 ]

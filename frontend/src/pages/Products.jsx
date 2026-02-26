@@ -226,7 +226,7 @@ const Products = () => {
                     <div className="flex justify-between items-center pt-4 border-t border-gray-50">
                       <div>
                         <p className="text-xs text-gray-400 uppercase">Price</p>
-                        <p className="text-lg font-bold text-gray-900">${p.price}</p>
+                        <p className="text-lg font-bold text-gray-900">₹{p.price}</p>
                       </div>
                       <div className="text-right">
                         <p className="text-xs text-gray-400 uppercase">Stock</p>

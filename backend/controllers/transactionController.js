@@ -62,7 +62,13 @@ exports.getTransactions = async (req, res, next) => {
     next(error);
   }
 };
-
+const sendLowStockAlert = async (userId, product) => {
+  // In a real app, you'd send an Email or Socket.io notification here
+  console.log(`⚠️ ALERT: ${product.name} (SKU: ${product.productId}) is low on stock! Current: ${product.stock}`);
+  
+  // You can also create a 'Notification' model entry here
+  // await Notification.create({ user: userId, message: `Restock needed for ${product.name}` });
+};
 exports.getUniqueCustomers = async (req, res) => {
   try {
     const userId = req.user.id; // Assuming you filter by the logged-in merchant/user
@@ -154,12 +160,10 @@ exports.createTransaction = async (req, res, next) => {
     }
 
     req.body.user = req.user.id;
-
     if (!req.body.transactionId) {
       req.body.transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
     }
 
-    // Process items and log movements
     for (const item of req.body.items) {
       const product = await Product.findOne({
         productId: item.productId,
@@ -167,38 +171,35 @@ exports.createTransaction = async (req, res, next) => {
       });
 
       if (product) {
-        // 1. Fill transaction item details
         item.productRef = product._id;
         item.productName = product.name;
         item.price = product.price;
 
-        // 2. Update the actual Product stock in DB
-        product.countInStock -= item.quantity;
+        // Update Product stock
+        product.stock -= item.quantity; // Note: Use .stock to match Product schema
         await product.save();
-
-        // 3. Create the Inventory Log (Warehouse Audit Trail)
+        if (product.stock < 5) {
+  await sendLowStockAlert(req.user.id, product);
+}
+        // --- FIX: Added productId and ensured stockAfter isn't negative ---
         await InventoryLog.create({
           user: req.user.id,
           product: product._id,
+          productId: product.productId, // Added missing required field
           changeType: "SALE",
           quantityChanged: -item.quantity,
-          stockAfter: product.countInStock,
+          stockAfter: Math.max(0, product.stock), // Prevents -2 error
           note: `Sold via Transaction: ${req.body.transactionId}`
         });
       }
     }
 
     const transaction = await Transaction.create(req.body);
-
-    res.status(201).json({
-      success: true,
-      data: transaction,
-    });
+    res.status(201).json({ success: true, data: transaction });
   } catch (error) {
     next(error);
   }
 };
-
 // controllers/transactionController.js
 exports.bulkUploadTransactions = async (req, res, next) => {
   try {
@@ -221,31 +222,30 @@ exports.bulkUploadTransactions = async (req, res, next) => {
         const product = await Product.findOne({ productId: item.productId, user: userId });
         
         if (product) {
-          // --- 🛡️ THE FIX: DEFENSIVE MATH ---
-          // Use Number() and || 0 to ensure we never get NaN
-          const currentStock = Number(product.countInStock) || 0;
+          const currentStock = Number(product.stock) || 0; // Use .stock
           const soldQty = Number(item.quantity) || 0;
-          const stockAfterCalc = currentStock - soldQty;
+          const stockAfterCalc = Math.max(0, currentStock - soldQty); // Fix: Prevent negative
 
-          // 1. Add productRef (Crucial for Frontend table to show names)
           processedItems.push({
             ...item,
             productRef: product._id,
+            productName: product.name,
+            price: product.price,
             quantity: soldQty 
           });
 
-          // 2. Prepare Stock Update
           productUpdates.push({
             updateOne: {
               filter: { _id: product._id },
-              update: { $inc: { countInStock: -soldQty } }
+              update: { $inc: { stock: -soldQty } } // Use .stock
             }
           });
 
-          // 3. Prepare Inventory Log Entry (Guaranteed Number now)
+          // --- FIX: Added productId here ---
           logEntries.push({
             user: userId,
             product: product._id,
+            productId: product.productId, // Added missing required field
             changeType: "SALE",
             quantityChanged: -soldQty,
             stockAfter: stockAfterCalc, 
@@ -264,34 +264,16 @@ exports.bulkUploadTransactions = async (req, res, next) => {
       }
     }
 
-    // --- 🚀 DATABASE OPERATIONS ---
-    let result = [];
-    if (preparedTransactions.length > 0) {
-      result = await Transaction.insertMany(preparedTransactions, { ordered: false });
-    }
-    
-    if (productUpdates.length > 0) {
-      await Product.bulkWrite(productUpdates);
-    }
-    
-    if (logEntries.length > 0) {
-      await InventoryLog.insertMany(logEntries);
-    }
+    // Database operations remain the same...
+    if (preparedTransactions.length > 0) await Transaction.insertMany(preparedTransactions, { ordered: false });
+    if (productUpdates.length > 0) await Product.bulkWrite(productUpdates);
+    if (logEntries.length > 0) await InventoryLog.insertMany(logEntries);
 
-    res.status(201).json({ 
-      success: true, 
-      count: result.length, 
-      data: result 
-    });
-
+    res.status(201).json({ success: true, count: preparedTransactions.length });
   } catch (error) {
-    if (error.code === 11000) {
-      return res.status(207).json({ success: true, message: "Skipped duplicates" });
-    }
     next(error);
   }
 };
-
 
 exports.deleteTransaction = async (req, res, next) => {
   try {
@@ -336,7 +318,7 @@ exports.getTransactionStats = async (req, res, next) => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // 1) Overview & Unique Shoppers (Optimized)
+    // 1) Overview & Unique Shoppers
     const overviewAgg = await Transaction.aggregate([
       { $match: { user: userId } },
       {
@@ -345,8 +327,6 @@ exports.getTransactionStats = async (req, res, next) => {
           totalTransactions: { $sum: 1 },
           totalRevenue: { $sum: "$totalAmount" },
           averageValue: { $avg: "$totalAmount" },
-          // Using $addToSet is fine for moderate data, 
-          // but for massive data, consider a separate cardinality aggregation.
           shoppers: { $addToSet: "$shopperId" }, 
         },
       },
@@ -369,8 +349,7 @@ exports.getTransactionStats = async (req, res, next) => {
       { $sort: { _id: 1 } },
     ]);
 
-    // 3) Product Performance (Top 10)
-    // We add productRef here so the frontend can link directly to the product page
+    // 3) Product Performance (Top 10) - KEY ALIGNMENT FIXED HERE
     const topProducts = await Transaction.aggregate([
       { $match: { user: userId } },
       { $unwind: "$items" },
@@ -378,12 +357,12 @@ exports.getTransactionStats = async (req, res, next) => {
         $group: {
           _id: "$items.productId",
           productRef: { $first: "$items.productRef" },
-          name: { $first: "$items.productName" },
-          totalQty: { $sum: "$items.quantity" },
-          totalSales: { $sum: { $multiply: ["$items.quantity", "$items.price"] } }
+          productName: { $first: "$items.productName" }, // Changed from 'name' to 'productName'
+          totalQuantity: { $sum: "$items.quantity" },   // Changed from 'totalQty' to 'totalQuantity'
+          totalRevenue: { $sum: { $multiply: ["$items.quantity", "$items.price"] } } // Added for revenue analysis
         },
       },
-      { $sort: { totalQty: -1 } },
+      { $sort: { totalQuantity: -1 } },
       { $limit: 10 },
     ]);
 
@@ -396,8 +375,8 @@ exports.getTransactionStats = async (req, res, next) => {
           averageTransactionValue: Math.round(o.averageValue * 100) / 100,
           uniqueCustomers: o.shoppers.length,
         },
-        revenueByDate,
-        topProducts,
+        revenueByDate, // Matches frontend revenueData
+        topProducts,   // Matches frontend topProductsData
       },
     });
   } catch (err) {
