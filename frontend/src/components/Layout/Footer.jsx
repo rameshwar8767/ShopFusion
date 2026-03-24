@@ -125,14 +125,8 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="order-2 md:order-1 text-center md:text-left">
               <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.1em]">
-                © {currentYear} ShopFusion Analytics • Built for BEIT Project
+                © {currentYear} ShopFusion Analytics
               </p>
-            </div>
-            
-            <div className="order-1 md:order-2 flex items-center gap-1 bg-indigo-50/50 px-4 py-2 rounded-full border border-indigo-100/50">
-              <span className="text-xs font-bold text-indigo-700">Made with</span>
-              <FiHeart className="text-red-500 fill-red-500 animate-bounce mx-1" size={12} />
-              <span className="text-xs font-bold text-indigo-700">for better retail</span>
             </div>
           </div>
         </div>
