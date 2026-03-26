@@ -1,22 +1,2580 @@
 [
-  { "transactionId": "TXN-1001", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-20T10:30:00Z", "items": [{ "productId": "DAI-001", "productRef": "65e1234567890abcdef00001", "productName": "Amul Taaza Milk", "quantity": 2, "price": 72 }, { "productId": "DAI-003", "productRef": "65e1234567890abcdef00010", "productName": "Britannia Brown Bread", "quantity": 1, "price": 50 }] },
-  { "transactionId": "TXN-1002", "shopperId": "SHOP_BETA_02", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-20T11:15:00Z", "items": [{ "productId": "ELE-002", "productRef": "65e1234567890abcdef00006", "productName": "Dell Vostro Laptop", "quantity": 1, "price": 55000 }, { "productId": "ELE-001", "productRef": "65e1234567890abcdef00002", "productName": "Logitech K380 Keyboard", "quantity": 1, "price": 2495 }] },
-  { "transactionId": "TXN-1003", "shopperId": "SHOP_GAMMA_03", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-21T09:00:00Z", "items": [{ "productId": "PER-001", "productRef": "65e1234567890abcdef00003", "productName": "Colgate MaxFresh", "quantity": 1, "price": 150 }, { "productId": "PER-002", "productRef": "65e1234567890abcdef00011", "productName": "Oral-B Toothbrush", "quantity": 2, "price": 60 }] },
-  { "transactionId": "TXN-1004", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-22T08:45:00Z", "items": [{ "productId": "DAI-004", "productRef": "65e1234567890abcdef00013", "productName": "Amul Butter", "quantity": 1, "price": 275 }, { "productId": "DAI-002", "productRef": "65e1234567890abcdef00005", "productName": "Mother Dairy Paneer", "quantity": 2, "price": 95 }] },
-  { "transactionId": "TXN-1005", "shopperId": "SHOP_DELTA_04", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-22T14:20:00Z", "items": [{ "productId": "FAS-001", "productRef": "65e1234567890abcdef00007", "productName": "Nike Revolution 6", "quantity": 1, "price": 3695 }, { "productId": "CLO-001", "productRef": "65e1234567890abcdef00009", "productName": "Levi's Men's T-Shirt", "quantity": 2, "price": 999 }] },
-  { "transactionId": "TXN-1006", "shopperId": "SHOP_EPSILON_05", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-23T18:10:00Z", "items": [{ "productId": "SNK-003", "productRef": "65e1234567890abcdef00027", "productName": "Maggi 2-Minute Noodles", "quantity": 5, "price": 96 }, { "productId": "SNK-002", "productRef": "65e1234567890abcdef00019", "productName": "Lays Classic Salted", "quantity": 3, "price": 20 }] },
-  { "transactionId": "TXN-1007", "shopperId": "SHOP_BETA_02", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-24T12:00:00Z", "items": [{ "productId": "ELE-005", "productRef": "65e1234567890abcdef00021", "productName": "Samsung S24 Ultra", "quantity": 1, "price": 129999 }, { "productId": "ELE-010", "productRef": "65e1234567890abcdef00041", "productName": "Mi Power Bank 3i", "quantity": 1, "price": 1299 }] },
-  { "transactionId": "TXN-1008", "shopperId": "SHOP_ZETA_06", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-24T15:30:00Z", "items": [{ "productId": "PER-004", "productRef": "65e1234567890abcdef00028", "productName": "Dove Shampoo", "quantity": 1, "price": 350 }, { "productId": "HOM-001", "productRef": "65e1234567890abcdef00004", "productName": "Surf Excel Matic", "quantity": 1, "price": 750 }] },
-  { "transactionId": "TXN-1009", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-25T07:30:00Z", "items": [{ "productId": "DAI-001", "productRef": "65e1234567890abcdef00001", "productName": "Amul Taaza Milk", "quantity": 3, "price": 72 }, { "productId": "DAI-011", "productRef": "65e1234567890abcdef00045", "productName": "Yakult Probiotic", "quantity": 1, "price": 85 }] },
-  { "transactionId": "TXN-1010", "shopperId": "SHOP_GAMMA_03", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-25T19:45:00Z", "items": [{ "productId": "DAI-007", "productRef": "65e1234567890abcdef00026", "productName": "Amul Cheese Slices", "quantity": 2, "price": 160 }, { "productId": "SNK-001", "productRef": "65e1234567890abcdef00008", "productName": "Oreo Biscuits", "quantity": 4, "price": 40 }] },
-  { "transactionId": "TXN-1011", "shopperId": "SHOP_ETA_07", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T10:00:00Z", "items": [{ "productId": "ELE-004", "productRef": "65e1234567890abcdef00015", "productName": "Sony WH-1000XM5", "quantity": 1, "price": 29990 }] },
-  { "transactionId": "TXN-1012", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T11:00:00Z", "items": [{ "productId": "DAI-012", "productRef": "65e1234567890abcdef00050", "productName": "Govind Toned Milk", "quantity": 2, "price": 54 }] },
-  { "transactionId": "TXN-1013", "shopperId": "SHOP_DELTA_04", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T14:30:00Z", "items": [{ "productId": "FAS-002", "productRef": "65e1234567890abcdef00016", "productName": "Adidas Ultraboost", "quantity": 1, "price": 17999 }] },
-  { "transactionId": "TXN-1014", "shopperId": "SHOP_THETA_08", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T16:00:00Z", "items": [{ "productId": "HOM-005", "productRef": "65e1234567890abcdef00043", "productName": "Lizol Disinfectant", "quantity": 1, "price": 380 }, { "productId": "HOM-003", "productRef": "65e1234567890abcdef00023", "productName": "Harpic Toilet Cleaner", "quantity": 1, "price": 180 }] },
-  { "transactionId": "TXN-1015", "shopperId": "SHOP_BETA_02", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T17:20:00Z", "items": [{ "productId": "ELE-009", "productRef": "65e1234567890abcdef00037", "productName": "SanDisk 128GB Flash Drive", "quantity": 2, "price": 899 }] },
-  { "transactionId": "TXN-1016", "shopperId": "SHOP_IOTA_09", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T18:00:00Z", "items": [{ "productId": "SNK-005", "productRef": "65e1234567890abcdef00046", "productName": "Ferrero Rocher", "quantity": 1, "price": 895 }] },
-  { "transactionId": "TXN-1017", "shopperId": "SHOP_KAPPA_10", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T19:00:00Z", "items": [{ "productId": "CLO-006", "productRef": "65e1234567890abcdef00049", "productName": "Jack & Jones Hoodie", "quantity": 1, "price": 2999 }, { "productId": "FAS-004", "productRef": "65e1234567890abcdef00038", "productName": "Crocs Classic Clog", "quantity": 1, "price": 2995 }] },
-  { "transactionId": "TXN-1018", "shopperId": "SHOP_ALPHA_01", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T20:00:00Z", "items": [{ "productId": "DAI-001", "productRef": "65e1234567890abcdef00001", "productName": "Amul Taaza Milk", "quantity": 1, "price": 72 }, { "productId": "SNK-004", "productRef": "65e1234567890abcdef00035", "productName": "Haldiram's Bhujia", "quantity": 1, "price": 100 }] },
-  { "transactionId": "TXN-1019", "shopperId": "SHOP_ZETA_06", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T21:00:00Z", "items": [{ "productId": "PER-005", "productRef": "65e1234567890abcdef00039", "productName": "Gillete Mach 3 Razor", "quantity": 1, "price": 450 }] },
-  { "transactionId": "TXN-1020", "shopperId": "SHOP_BETA_02", "user": "69a08e42f8532a9128f270a4", "timestamp": "2026-02-26T22:00:00Z", "items": [{ "productId": "ELE-012", "productRef": "65e1234567890abcdef00048", "productName": "Fire-Boltt Smartwatch", "quantity": 1, "price": 1799 }] }
+  {
+    "transactionId": "TXN-1001",
+    "shopperId": "SHOP_ALPHA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-20T10:30:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef00001",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      },
+      {
+        "productId": "DAI-003",
+        "productRef": "65e1234567890abcdef00010",
+        "productName": "Britannia Brown Bread",
+        "quantity": 1,
+        "price": 50
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1002",
+    "shopperId": "SHOP_BETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-20T11:15:00Z",
+    "items": [
+      {
+        "productId": "ELE-002",
+        "productRef": "65e1234567890abcdef00006",
+        "productName": "Dell Vostro Laptop",
+        "quantity": 1,
+        "price": 55000
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef00002",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1003",
+    "shopperId": "SHOP_GAMMA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-21T09:00:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef00003",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "PER-002",
+        "productRef": "65e1234567890abcdef00011",
+        "productName": "Oral-B Toothbrush",
+        "quantity": 2,
+        "price": 60
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1004",
+    "shopperId": "SHOP_ALPHA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-22T08:45:00Z",
+    "items": [
+      {
+        "productId": "DAI-004",
+        "productRef": "65e1234567890abcdef00013",
+        "productName": "Amul Butter",
+        "quantity": 1,
+        "price": 275
+      },
+      {
+        "productId": "DAI-002",
+        "productRef": "65e1234567890abcdef00005",
+        "productName": "Mother Dairy Paneer",
+        "quantity": 2,
+        "price": 95
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1005",
+    "shopperId": "SHOP_DELTA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-22T14:20:00Z",
+    "items": [
+      {
+        "productId": "FAS-001",
+        "productRef": "65e1234567890abcdef00007",
+        "productName": "Nike Revolution 6",
+        "quantity": 1,
+        "price": 3695
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef00009",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1006",
+    "shopperId": "SHOP_EPSILON_05",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-23T18:10:00Z",
+    "items": [
+      {
+        "productId": "SNK-003",
+        "productRef": "65e1234567890abcdef00027",
+        "productName": "Maggi 2-Minute Noodles",
+        "quantity": 5,
+        "price": 96
+      },
+      {
+        "productId": "SNK-002",
+        "productRef": "65e1234567890abcdef00019",
+        "productName": "Lays Classic Salted",
+        "quantity": 3,
+        "price": 20
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1007",
+    "shopperId": "SHOP_BETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-24T12:00:00Z",
+    "items": [
+      {
+        "productId": "ELE-005",
+        "productRef": "65e1234567890abcdef00021",
+        "productName": "Samsung S24 Ultra",
+        "quantity": 1,
+        "price": 129999
+      },
+      {
+        "productId": "ELE-010",
+        "productRef": "65e1234567890abcdef00041",
+        "productName": "Mi Power Bank 3i",
+        "quantity": 1,
+        "price": 1299
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1008",
+    "shopperId": "SHOP_ZETA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-24T15:30:00Z",
+    "items": [
+      {
+        "productId": "PER-004",
+        "productRef": "65e1234567890abcdef00028",
+        "productName": "Dove Shampoo",
+        "quantity": 1,
+        "price": 350
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef00004",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1009",
+    "shopperId": "SHOP_ALPHA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-25T07:30:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef00001",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      },
+      {
+        "productId": "DAI-011",
+        "productRef": "65e1234567890abcdef00045",
+        "productName": "Yakult Probiotic",
+        "quantity": 1,
+        "price": 85
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1010",
+    "shopperId": "SHOP_GAMMA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-25T19:45:00Z",
+    "items": [
+      {
+        "productId": "DAI-007",
+        "productRef": "65e1234567890abcdef00026",
+        "productName": "Amul Cheese Slices",
+        "quantity": 2,
+        "price": 160
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef00008",
+        "productName": "Oreo Biscuits",
+        "quantity": 4,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1011",
+    "shopperId": "SHOP_ETA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T10:00:00Z",
+    "items": [
+      {
+        "productId": "ELE-004",
+        "productRef": "65e1234567890abcdef00015",
+        "productName": "Sony WH-1000XM5",
+        "quantity": 1,
+        "price": 29990
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1012",
+    "shopperId": "SHOP_ALPHA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T11:00:00Z",
+    "items": [
+      {
+        "productId": "DAI-012",
+        "productRef": "65e1234567890abcdef00050",
+        "productName": "Govind Toned Milk",
+        "quantity": 2,
+        "price": 54
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1013",
+    "shopperId": "SHOP_DELTA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T14:30:00Z",
+    "items": [
+      {
+        "productId": "FAS-002",
+        "productRef": "65e1234567890abcdef00016",
+        "productName": "Adidas Ultraboost",
+        "quantity": 1,
+        "price": 17999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1014",
+    "shopperId": "SHOP_THETA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T16:00:00Z",
+    "items": [
+      {
+        "productId": "HOM-005",
+        "productRef": "65e1234567890abcdef00043",
+        "productName": "Lizol Disinfectant",
+        "quantity": 1,
+        "price": 380
+      },
+      {
+        "productId": "HOM-003",
+        "productRef": "65e1234567890abcdef00023",
+        "productName": "Harpic Toilet Cleaner",
+        "quantity": 1,
+        "price": 180
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1015",
+    "shopperId": "SHOP_BETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T17:20:00Z",
+    "items": [
+      {
+        "productId": "ELE-009",
+        "productRef": "65e1234567890abcdef00037",
+        "productName": "SanDisk 128GB Flash Drive",
+        "quantity": 2,
+        "price": 899
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1016",
+    "shopperId": "SHOP_IOTA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T18:00:00Z",
+    "items": [
+      {
+        "productId": "SNK-005",
+        "productRef": "65e1234567890abcdef00046",
+        "productName": "Ferrero Rocher",
+        "quantity": 1,
+        "price": 895
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1017",
+    "shopperId": "SHOP_KAPPA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T19:00:00Z",
+    "items": [
+      {
+        "productId": "CLO-006",
+        "productRef": "65e1234567890abcdef00049",
+        "productName": "Jack & Jones Hoodie",
+        "quantity": 1,
+        "price": 2999
+      },
+      {
+        "productId": "FAS-004",
+        "productRef": "65e1234567890abcdef00038",
+        "productName": "Crocs Classic Clog",
+        "quantity": 1,
+        "price": 2995
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1018",
+    "shopperId": "SHOP_ALPHA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T20:00:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef00001",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "SNK-004",
+        "productRef": "65e1234567890abcdef00035",
+        "productName": "Haldiram's Bhujia",
+        "quantity": 1,
+        "price": 100
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1019",
+    "shopperId": "SHOP_ZETA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T21:00:00Z",
+    "items": [
+      {
+        "productId": "PER-005",
+        "productRef": "65e1234567890abcdef00039",
+        "productName": "Gillete Mach 3 Razor",
+        "quantity": 1,
+        "price": 450
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1020",
+    "shopperId": "SHOP_BETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-02-26T22:00:00Z",
+    "items": [
+      {
+        "productId": "ELE-012",
+        "productRef": "65e1234567890abcdef00048",
+        "productName": "Fire-Boltt Smartwatch",
+        "quantity": 1,
+        "price": 1799
+      }
+    ]
+  },
+
+  {
+    "transactionId": "TXN-1021",
+    "shopperId": "SHOP_BETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T10:00:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1021",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 2,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1022",
+    "shopperId": "SHOP_DELTA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T10:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1022",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1022",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1022",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1023",
+    "shopperId": "SHOP_DELTA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T10:30:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1023",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1023",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1023",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1024",
+    "shopperId": "SHOP_GAMMA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T10:45:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1024",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1024",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 1,
+        "price": 999
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1024",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1025",
+    "shopperId": "SHOP_DELTA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T11:00:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1025",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1026",
+    "shopperId": "SHOP_ZETA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T11:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1026",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1026",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1026",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1027",
+    "shopperId": "SHOP_DELTA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T11:30:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1027",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1027",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1027",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1028",
+    "shopperId": "SHOP_DELTA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T11:45:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1028",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1028",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1028",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1029",
+    "shopperId": "SHOP_ZETA_05",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T12:00:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1029",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1029",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 2,
+        "price": 2495
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1029",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1030",
+    "shopperId": "SHOP_BETA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T12:15:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1030",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1031",
+    "shopperId": "SHOP_GAMMA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T12:30:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1031",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1031",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1031",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1032",
+    "shopperId": "SHOP_GAMMA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T12:45:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1032",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1033",
+    "shopperId": "SHOP_DELTA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T13:00:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1033",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1033",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1034",
+    "shopperId": "SHOP_BETA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T13:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1034",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1034",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1034",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1035",
+    "shopperId": "SHOP_DELTA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T13:30:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1035",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1035",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1036",
+    "shopperId": "SHOP_GAMMA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T13:45:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1036",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1036",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1036",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1037",
+    "shopperId": "SHOP_GAMMA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T14:00:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1037",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1037",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1038",
+    "shopperId": "SHOP_ZETA_05",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T14:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1038",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1038",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1038",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1039",
+    "shopperId": "SHOP_ALPHA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T14:30:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1039",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1039",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1039",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1040",
+    "shopperId": "SHOP_BETA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T14:45:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1040",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1040",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1040",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1041",
+    "shopperId": "SHOP_DELTA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T15:00:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1041",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1041",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1041",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1042",
+    "shopperId": "SHOP_ZETA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T15:15:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1042",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1042",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1042",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1043",
+    "shopperId": "SHOP_BETA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T15:30:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1043",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1044",
+    "shopperId": "SHOP_DELTA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T15:45:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1044",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1044",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1044",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1045",
+    "shopperId": "SHOP_ZETA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T16:00:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1045",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1046",
+    "shopperId": "SHOP_BETA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T16:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1046",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1047",
+    "shopperId": "SHOP_ZETA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T16:30:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1047",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1047",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1047",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1048",
+    "shopperId": "SHOP_ZETA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T16:45:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1048",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1049",
+    "shopperId": "SHOP_DELTA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T17:00:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1049",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 1,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1050",
+    "shopperId": "SHOP_ZETA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T17:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1050",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1050",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1050",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1051",
+    "shopperId": "SHOP_ALPHA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T17:30:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1051",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1051",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1052",
+    "shopperId": "SHOP_ALPHA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T17:45:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1052",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1053",
+    "shopperId": "SHOP_BETA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T18:00:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1053",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1053",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1054",
+    "shopperId": "SHOP_GAMMA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T18:15:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1054",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 1,
+        "price": 999
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1054",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1054",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1055",
+    "shopperId": "SHOP_GAMMA_05",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T18:30:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1055",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1055",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1056",
+    "shopperId": "SHOP_ZETA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T18:45:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1056",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1057",
+    "shopperId": "SHOP_ALPHA_05",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T19:00:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1057",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1057",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1058",
+    "shopperId": "SHOP_ZETA_05",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T19:15:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1058",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1059",
+    "shopperId": "SHOP_ALPHA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T19:30:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1059",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1059",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 2,
+        "price": 2495
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1059",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1060",
+    "shopperId": "SHOP_ZETA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T19:45:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1060",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1060",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1060",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1061",
+    "shopperId": "SHOP_BETA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T20:00:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1061",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1061",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1061",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1062",
+    "shopperId": "SHOP_ALPHA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T20:15:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1062",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1063",
+    "shopperId": "SHOP_GAMMA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T20:30:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1063",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1064",
+    "shopperId": "SHOP_BETA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T20:45:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1064",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1065",
+    "shopperId": "SHOP_ALPHA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T21:00:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1065",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1065",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 2,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1066",
+    "shopperId": "SHOP_ALPHA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T21:15:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1066",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1067",
+    "shopperId": "SHOP_ZETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T21:30:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1067",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1067",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1068",
+    "shopperId": "SHOP_DELTA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T21:45:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1068",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1068",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1069",
+    "shopperId": "SHOP_ZETA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T22:00:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1069",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1069",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1070",
+    "shopperId": "SHOP_BETA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T22:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1070",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1071",
+    "shopperId": "SHOP_DELTA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T22:30:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1071",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1071",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1072",
+    "shopperId": "SHOP_BETA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T22:45:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1072",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1073",
+    "shopperId": "SHOP_ALPHA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T23:00:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1073",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1074",
+    "shopperId": "SHOP_DELTA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T23:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1074",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1074",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1074",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1075",
+    "shopperId": "SHOP_DELTA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T23:30:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1075",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1076",
+    "shopperId": "SHOP_GAMMA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-01T23:45:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1076",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1077",
+    "shopperId": "SHOP_ZETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T00:00:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1077",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1078",
+    "shopperId": "SHOP_ALPHA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T00:15:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1078",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1078",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1078",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1079",
+    "shopperId": "SHOP_ZETA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T00:30:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1079",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1079",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1079",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1080",
+    "shopperId": "SHOP_DELTA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T00:45:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1080",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1080",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1081",
+    "shopperId": "SHOP_ZETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T01:00:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1081",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1082",
+    "shopperId": "SHOP_DELTA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T01:15:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1082",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1083",
+    "shopperId": "SHOP_DELTA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T01:30:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1083",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1083",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1083",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1084",
+    "shopperId": "SHOP_ZETA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T01:45:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1084",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1084",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1085",
+    "shopperId": "SHOP_ZETA_02",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T02:00:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1085",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1086",
+    "shopperId": "SHOP_DELTA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T02:15:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1086",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1086",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1086",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1087",
+    "shopperId": "SHOP_BETA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T02:30:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1087",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1088",
+    "shopperId": "SHOP_GAMMA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T02:45:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1088",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1089",
+    "shopperId": "SHOP_ZETA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T03:00:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1089",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1089",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1089",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1090",
+    "shopperId": "SHOP_BETA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T03:15:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1090",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1090",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1090",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1091",
+    "shopperId": "SHOP_BETA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T03:30:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1091",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1091",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1092",
+    "shopperId": "SHOP_DELTA_10",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T03:45:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1092",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1092",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 1,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1093",
+    "shopperId": "SHOP_ZETA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T04:00:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1093",
+        "productName": "Surf Excel Matic",
+        "quantity": 2,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1094",
+    "shopperId": "SHOP_ZETA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T04:15:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1094",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1094",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1094",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1095",
+    "shopperId": "SHOP_ALPHA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T04:30:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1095",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1096",
+    "shopperId": "SHOP_BETA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T04:45:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1096",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1097",
+    "shopperId": "SHOP_BETA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T05:00:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1097",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 1,
+        "price": 999
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1097",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1098",
+    "shopperId": "SHOP_ALPHA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T05:15:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1098",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1099",
+    "shopperId": "SHOP_DELTA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T05:30:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1099",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1099",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1100",
+    "shopperId": "SHOP_GAMMA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T05:45:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1100",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1100",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1101",
+    "shopperId": "SHOP_ALPHA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T06:00:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1101",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1102",
+    "shopperId": "SHOP_GAMMA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T06:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1102",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1102",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1103",
+    "shopperId": "SHOP_ZETA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T06:30:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1103",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1104",
+    "shopperId": "SHOP_ALPHA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T06:45:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1104",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1104",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 2,
+        "price": 2495
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1104",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1105",
+    "shopperId": "SHOP_ALPHA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T07:00:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1105",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1105",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1105",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1106",
+    "shopperId": "SHOP_ALPHA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T07:15:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1106",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1106",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1107",
+    "shopperId": "SHOP_DELTA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T07:30:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1107",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1108",
+    "shopperId": "SHOP_ZETA_05",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T07:45:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1108",
+        "productName": "Amul Taaza Milk",
+        "quantity": 2,
+        "price": 72
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1108",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1109",
+    "shopperId": "SHOP_GAMMA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T08:00:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1109",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1109",
+        "productName": "Colgate MaxFresh",
+        "quantity": 1,
+        "price": 150
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1109",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1110",
+    "shopperId": "SHOP_ZETA_07",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T08:15:00Z",
+    "items": [
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1110",
+        "productName": "Colgate MaxFresh",
+        "quantity": 2,
+        "price": 150
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1110",
+        "productName": "Oreo Biscuits",
+        "quantity": 2,
+        "price": 40
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1110",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1111",
+    "shopperId": "SHOP_ALPHA_06",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T08:30:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1111",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 1,
+        "price": 999
+      },
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1111",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1112",
+    "shopperId": "SHOP_ALPHA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T08:45:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1112",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 3,
+        "price": 2495
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1112",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      },
+      {
+        "productId": "PER-001",
+        "productRef": "65e1234567890abcdef1112",
+        "productName": "Colgate MaxFresh",
+        "quantity": 3,
+        "price": 150
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1113",
+    "shopperId": "SHOP_DELTA_09",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T09:00:00Z",
+    "items": [
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1113",
+        "productName": "Amul Taaza Milk",
+        "quantity": 1,
+        "price": 72
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1114",
+    "shopperId": "SHOP_BETA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T09:15:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1114",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1115",
+    "shopperId": "SHOP_BETA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T09:30:00Z",
+    "items": [
+      {
+        "productId": "ELE-001",
+        "productRef": "65e1234567890abcdef1115",
+        "productName": "Logitech K380 Keyboard",
+        "quantity": 1,
+        "price": 2495
+      },
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1115",
+        "productName": "Surf Excel Matic",
+        "quantity": 3,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1116",
+    "shopperId": "SHOP_DELTA_01",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T09:45:00Z",
+    "items": [
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1116",
+        "productName": "Oreo Biscuits",
+        "quantity": 3,
+        "price": 40
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1116",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 2,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1117",
+    "shopperId": "SHOP_GAMMA_04",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T10:00:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1117",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 1,
+        "price": 999
+      },
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1117",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1118",
+    "shopperId": "SHOP_BETA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T10:15:00Z",
+    "items": [
+      {
+        "productId": "CLO-001",
+        "productRef": "65e1234567890abcdef1118",
+        "productName": "Levi's Men's T-Shirt",
+        "quantity": 3,
+        "price": 999
+      },
+      {
+        "productId": "SNK-001",
+        "productRef": "65e1234567890abcdef1118",
+        "productName": "Oreo Biscuits",
+        "quantity": 1,
+        "price": 40
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1119",
+    "shopperId": "SHOP_DELTA_03",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T10:30:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1119",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      }
+    ]
+  },
+  {
+    "transactionId": "TXN-1120",
+    "shopperId": "SHOP_BETA_08",
+    "user": "69a08e42f8532a9128f270a4",
+    "timestamp": "2026-03-02T10:45:00Z",
+    "items": [
+      {
+        "productId": "HOM-001",
+        "productRef": "65e1234567890abcdef1120",
+        "productName": "Surf Excel Matic",
+        "quantity": 1,
+        "price": 750
+      },
+      {
+        "productId": "DAI-001",
+        "productRef": "65e1234567890abcdef1120",
+        "productName": "Amul Taaza Milk",
+        "quantity": 3,
+        "price": 72
+      }
+    ]
+  }
 ]
