@@ -5,11 +5,12 @@ import {
   createProduct,
   bulkUploadProducts,
   updateProduct,
-  deleteProduct, // Ensure this exists in your slice
+  deleteProduct,
 } from "../redux/slices/productSlice";
-
+import * as XLSX from 'xlsx';
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
+import ProductAnalytics from "../components/ProductAnalytics";
 import {
   FiUpload,
   FiSearch,
@@ -19,6 +20,8 @@ import {
   FiTrash2,
   FiTag,
   FiLayers,
+  FiBarChart2,
+  FiFilter,
 } from "react-icons/fi";
 
 const Products = () => {
@@ -30,6 +33,10 @@ const Products = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [showAnalytics, setShowAnalytics] = useState(true);
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   const initialFormState = {
     productId: "",
@@ -45,8 +52,12 @@ const Products = () => {
   const [editForm, setEditForm] = useState(initialFormState);
 
   useEffect(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
+    dispatch(getProducts({ page: currentPage, limit: 100 })).then((result) => {
+      if (result.payload?.total) {
+        setTotalProducts(result.payload.total);
+      }
+    });
+  }, [dispatch, currentPage]);
 
   // ---------------- HANDLERS ----------------
   const handleEditChange = (e) => {
@@ -106,32 +117,113 @@ const Products = () => {
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const parsed = JSON.parse(event.target.result);
-        const productsArray = Array.isArray(parsed) ? parsed : parsed.products;
-        await dispatch(bulkUploadProducts(productsArray)).unwrap();
-        toast.success("Bulk upload successful");
-        dispatch(getProducts());
-        setShowUploadModal(false);
-      } catch (err) {
-        toast.error("Invalid JSON file");
-      } finally {
-        e.target.value = "";
-      }
-    };
-    reader.readAsText(file);
+
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (fileExtension === 'json') {
+      // Handle JSON file
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          const productsArray = Array.isArray(parsed) ? parsed : parsed.products;
+          await dispatch(bulkUploadProducts(productsArray)).unwrap();
+          toast.success(`${productsArray.length} products uploaded successfully`);
+          dispatch(getProducts());
+          setShowUploadModal(false);
+        } catch (err) {
+          toast.error("Invalid JSON file");
+        } finally {
+          e.target.value = "";
+        }
+      };
+      reader.readAsText(file);
+    } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+      // Handle Excel file
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const data = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+          if (!jsonData || jsonData.length === 0) {
+            toast.error('Excel file is empty or has no data rows');
+            e.target.value = "";
+            return;
+          }
+
+          // Transform Excel data to match product schema
+          const productsArray = jsonData.map((row, index) => {
+            const productId = row.productId || row.ProductID || row['Product ID'] || row.PRODUCTID;
+            const name = row.name || row.Name || row['Product Name'] || row.NAME;
+            
+            if (!productId || !name) {
+              throw new Error(`Row ${index + 2}: Missing required fields (productId or name)`);
+            }
+
+            const product = {
+              productId,
+              name,
+              category: row.category || row.Category || row.CATEGORY || '',
+              price: Number(row.price || row.Price || row.PRICE || 0),
+              stock: Number(row.stock || row.Stock || row.STOCK || 0),
+              description: row.description || row.Description || row.DESCRIPTION || ''
+            };
+
+            // Handle features - can be string or array
+            if (row.features || row.Features) {
+              const featuresValue = row.features || row.Features;
+              if (typeof featuresValue === 'string') {
+                product.features = featuresValue.split(',').map(f => f.trim());
+              } else if (Array.isArray(featuresValue)) {
+                product.features = featuresValue;
+              }
+            }
+
+            // Handle optional fields if present
+            if (row.image) product.image = row.image;
+            if (row.expiryDate) product.expiryDate = row.expiryDate;
+
+            return product;
+          });
+
+          await dispatch(bulkUploadProducts(productsArray)).unwrap();
+          toast.success(`${productsArray.length} products uploaded from Excel`);
+          setCurrentPage(1);
+          dispatch(getProducts({ page: 1, limit: 100 })).then((result) => {
+            if (result.payload?.total) {
+              setTotalProducts(result.payload.total);
+            }
+          });
+          setShowUploadModal(false);
+        } catch (err) {
+          console.error('Excel import error:', err);
+          const errorMsg = err.message || err || "Failed to parse Excel file. Check console for details.";
+          toast.error(errorMsg);
+        } finally {
+          e.target.value = "";
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      toast.error('Please upload a JSON or Excel file');
+      e.target.value = "";
+    }
   };
 
   const filteredProducts = products.filter((p) => {
     const term = searchTerm.toLowerCase();
-    return (
-      p.name?.toLowerCase().includes(term) ||
+    const matchesSearch = p.name?.toLowerCase().includes(term) ||
       p.productId?.toLowerCase().includes(term) ||
-      p.category?.toLowerCase().includes(term)
-    );
+      p.category?.toLowerCase().includes(term);
+    const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter;
+    return matchesSearch && matchesCategory;
   });
+
+  const categories = ['all', ...new Set(products.map(p => p.category).filter(Boolean))];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
@@ -142,9 +234,17 @@ const Products = () => {
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
               <FiPackage className="text-blue-600" /> Inventory Management
             </h1>
-            <p className="text-gray-500">Track and manage your store products</p>
+            <p className="text-gray-500">Track and manage your store products {totalProducts > 0 && `(${totalProducts} total)`}</p>
           </div>
           <div className="flex gap-3 w-full md:w-auto">
+            <button 
+              onClick={() => setShowAnalytics(!showAnalytics)} 
+              className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 border rounded-lg transition-colors shadow-sm ${
+                showAnalytics ? 'bg-blue-600 text-white border-blue-600' : 'bg-white border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <FiBarChart2 /> {showAnalytics ? 'Hide' : 'Show'} Analytics
+            </button>
             <button onClick={() => setShowUploadModal(true)} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
               <FiUpload /> Bulk Import
             </button>
@@ -154,16 +254,41 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="relative mb-8">
-          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
-          <input
-            className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
-            placeholder="Search by name, Product ID, or category..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        {/* Search Bar and Filters */}
+        <div className="space-y-4 mb-8">
+          <div className="relative">
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 size-5" />
+            <input
+              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
+              placeholder="Search by name, Product ID, or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          
+          {/* Category Filter */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            <FiFilter className="text-gray-400 flex-shrink-0" />
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setCategoryFilter(cat)}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all ${
+                  categoryFilter === cat
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:border-blue-300'
+                }`}
+              >
+                {cat === 'all' ? 'All Categories' : cat}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Analytics Dashboard */}
+        {showAnalytics && products.length > 0 && (
+          <ProductAnalytics products={products} />
+        )}
 
         {/* Product Grid */}
         {isLoading ? (
@@ -239,6 +364,29 @@ const Products = () => {
                 </motion.div>
               ))}
             </AnimatePresence>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {totalProducts > 100 && (
+          <div className="mt-8 flex justify-center items-center gap-4">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Previous
+            </button>
+            <span className="text-sm text-gray-600 font-medium">
+              Page {currentPage} of {Math.ceil(totalProducts / 100)}
+            </span>
+            <button
+              onClick={() => setCurrentPage(p => p + 1)}
+              disabled={currentPage >= Math.ceil(totalProducts / 100)}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
           </div>
         )}
 
@@ -337,9 +485,9 @@ const Products = () => {
               <div className="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-600">
                 <FiUpload size={30} />
               </div>
-              <h3 className="text-xl font-bold mb-2">Import JSON</h3>
-              <p className="text-gray-500 mb-6">Select a .json file containing your product list</p>
-              <input type="file" accept=".json" onChange={handleFileUpload} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-6" />
+              <h3 className="text-xl font-bold mb-2">Import Products</h3>
+              <p className="text-gray-500 mb-6">Select a JSON or Excel file containing your product list</p>
+              <input type="file" accept=".json,.xlsx,.xls" onChange={handleFileUpload} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-6" />
               <button onClick={() => setShowUploadModal(false)} className="text-gray-400 font-medium hover:text-gray-600">Close</button>
             </div>
           </div>

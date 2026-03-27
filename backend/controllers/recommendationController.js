@@ -375,20 +375,53 @@ const ML_ENGINE_URL = "http://127.0.0.1:8000";
 exports.generateMBA = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    // Calling your updated FastAPI training endpoint
-    const mlRes = await axios.post(`${ML_ENGINE_URL}/api/train/${userId}`);
-
-    res.json({
-      success: true,
-      message: "ML Engine training successful",
-      data: mlRes.data,
-    });
+    
+    console.log('Starting MBA generation for user:', userId);
+    
+    // Check if we have transactions first
+    const transactionCount = await Transaction.countDocuments({ user: userId });
+    console.log('Transaction count:', transactionCount);
+    
+    if (transactionCount === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No transactions found. Please import transaction data first."
+      });
+    }
+    
+    // Try to call ML engine
+    try {
+      const mlRes = await axios.post(`${ML_ENGINE_URL}/api/train/${userId}`, {}, {
+        timeout: 30000 // 30 second timeout
+      });
+      
+      console.log('ML Engine response:', mlRes.data);
+      
+      res.json({
+        success: true,
+        message: "ML Engine training successful",
+        data: mlRes.data,
+      });
+    } catch (mlError) {
+      console.error('ML Engine Error:', mlError.message);
+      
+      // If ML engine is not available, return a helpful message
+      if (mlError.code === 'ECONNREFUSED') {
+        return res.status(503).json({
+          success: false,
+          message: "ML Engine is not running. Please start the Python ML engine on port 8000.",
+          error: "Connection refused to ML engine"
+        });
+      }
+      
+      throw mlError;
+    }
   } catch (err) {
-    console.error("ML Training Error:", err.response?.data || err.message);
+    console.error("MBA Generation Error:", err.message);
     res.status(500).json({
       success: false,
-      error: "ML Engine failed to process training",
-      details: err.response?.data?.detail || err.message,
+      message: "Failed to generate recommendations",
+      error: err.message,
     });
   }
 };
@@ -442,10 +475,9 @@ exports.getProductBundles = async (req, res, next) => {
           name: productMap[pid]?.name || `Product ${pid}`,
           image: productMap[pid]?.image || null, // Helpful for the UI
         })),
-        // Formatting metrics for the frontend
-        confidence: (rule.confidence || 0).toFixed(2),
-        lift: (rule.lift || 0).toFixed(2),
-        support: (rule.support || 0).toFixed(2),
+        confidence: rule.confidence,
+        lift: rule.lift,
+        support: rule.support,
         uplift: rule.lift > 2 ? "High" : "Medium",
       };
     });

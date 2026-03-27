@@ -40,40 +40,56 @@ async def root():
     return {"status": "online", "engine": "ShopFusion Hybrid ML", "version": "1.0.0"}
 
 @app.post("/api/train/{user_id}")
-async def train_models(user_id: str, background_tasks: BackgroundTasks):
+async def train_models(user_id: str):
     """
-    Triggers the training pipeline. 
-    Uses BackgroundTasks so the Node.js API doesn't timeout.
+    Triggers the training pipeline synchronously for debugging.
     """
-    def training_process():
-        try:
-            # 1. Fetch data from Mongo
-            products = load_products(user_id)
-            transactions = load_transactions(user_id)
-            
-            if not products or not transactions:
-                print(f"Insufficient data for user {user_id}")
-                return
+    try:
+        print(f"\n🚀 Starting training for user: {user_id}")
+        
+        # 1. Fetch data from Mongo
+        products = load_products(user_id)
+        transactions = load_transactions(user_id)
+        
+        print(f"📊 Loaded {len(products)} products and {len(transactions)} transactions")
+        
+        if not products or not transactions:
+            return {"error": "Insufficient data", "products": len(products), "transactions": len(transactions)}
 
-            # 2. Run Expiry Logic (Business Boosts)
-            expired_ids, _, _ = apply_expiry_logic(products)
-            mark_products_expired(expired_ids)
+        # 2. Run Expiry Logic (Business Boosts)
+        expired_ids, _, _ = apply_expiry_logic(products)
+        mark_products_expired(expired_ids)
+        print(f"⏰ Marked {len(expired_ids)} products as expired")
 
-            # 3. Market Basket Analysis (MBA)
-            # We save rules to DB so /recommend can stay fast
-            rules = run_mba(transactions)
+        # 3. Market Basket Analysis (MBA)
+        print("🔍 Running Market Basket Analysis...")
+        rules = run_mba(transactions, min_support=0.001, min_confidence=0.1, min_lift=0.5)
+        print(f"📈 Generated {len(rules)} association rules")
+        
+        if len(rules) > 0:
             save_association_rules(user_id, rules)
+            print(f"💾 Saved {len(rules)} rules to database")
+        else:
+            print("⚠️  No rules generated - try lowering thresholds")
 
-            # 4. Update In-Memory ML Models
-            content_engine.fit(products)
-            collab_engine.fit(transactions)
-            
-            print(f"✅ Training complete for retailer: {user_id}")
-        except Exception as e:
-            print(f"❌ Training Error: {e}")
-
-    background_tasks.add_task(training_process)
-    return {"message": "Training started", "user_id": user_id}
+        # 4. Update In-Memory ML Models
+        content_engine.fit(products)
+        collab_engine.fit(transactions)
+        
+        print(f"✅ Training complete for retailer: {user_id}")
+        
+        return {
+            "message": "Training completed",
+            "user_id": user_id,
+            "products_count": len(products),
+            "transactions_count": len(transactions),
+            "rules_generated": len(rules)
+        }
+    except Exception as e:
+        print(f"❌ Training Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/recommend/{user_id}")
 async def get_recommendations(user_id: str, cart_items: str = ""):

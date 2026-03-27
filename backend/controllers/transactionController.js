@@ -213,6 +213,7 @@ exports.bulkUploadTransactions = async (req, res, next) => {
     const preparedTransactions = [];
     const logEntries = [];
     const productUpdates = [];
+    const warnings = [];
 
     for (const t of transactions) {
       const transactionId = t.transactionId || `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
@@ -222,9 +223,9 @@ exports.bulkUploadTransactions = async (req, res, next) => {
         const product = await Product.findOne({ productId: item.productId, user: userId });
         
         if (product) {
-          const currentStock = Number(product.stock) || 0; // Use .stock
+          const currentStock = Number(product.stock) || 0;
           const soldQty = Number(item.quantity) || 0;
-          const stockAfterCalc = Math.max(0, currentStock - soldQty); // Fix: Prevent negative
+          const stockAfterCalc = Math.max(0, currentStock - soldQty);
 
           processedItems.push({
             ...item,
@@ -237,20 +238,21 @@ exports.bulkUploadTransactions = async (req, res, next) => {
           productUpdates.push({
             updateOne: {
               filter: { _id: product._id },
-              update: { $inc: { stock: -soldQty } } // Use .stock
+              update: { $inc: { stock: -soldQty } }
             }
           });
 
-          // --- FIX: Added productId here ---
           logEntries.push({
             user: userId,
             product: product._id,
-            productId: product.productId, // Added missing required field
+            productId: product.productId,
             changeType: "SALE",
             quantityChanged: -soldQty,
             stockAfter: stockAfterCalc, 
             note: `Bulk Upload: ${transactionId}`
           });
+        } else {
+          warnings.push(`Product ${item.productId} not found in transaction ${transactionId}`);
         }
       }
 
@@ -261,15 +263,21 @@ exports.bulkUploadTransactions = async (req, res, next) => {
           user: userId, 
           transactionId 
         });
+      } else {
+        warnings.push(`Transaction ${transactionId} skipped - no valid products found`);
       }
     }
 
-    // Database operations remain the same...
     if (preparedTransactions.length > 0) await Transaction.insertMany(preparedTransactions, { ordered: false });
     if (productUpdates.length > 0) await Product.bulkWrite(productUpdates);
     if (logEntries.length > 0) await InventoryLog.insertMany(logEntries);
 
-    res.status(201).json({ success: true, count: preparedTransactions.length });
+    res.status(201).json({ 
+      success: true, 
+      count: preparedTransactions.length,
+      warnings: warnings.length > 0 ? warnings : undefined,
+      message: warnings.length > 0 ? `${preparedTransactions.length} transactions imported, ${warnings.length} items skipped` : undefined
+    });
   } catch (error) {
     next(error);
   }

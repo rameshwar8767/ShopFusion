@@ -203,20 +203,34 @@ exports.bulkUploadProducts = async (req, res, next) => {
       user: userId,
     }));
 
-    const inserted = await Product.insertMany(withUser, { ordered: false });
+    let inserted = [];
+    let duplicateCount = 0;
+
+    try {
+      inserted = await Product.insertMany(withUser, { ordered: false });
+    } catch (err) {
+      if (err.code === 11000) {
+        // Some documents were inserted, some were duplicates
+        inserted = err.insertedDocs || [];
+        duplicateCount = withUser.length - inserted.length;
+      } else {
+        throw err;
+      }
+    }
+
+    const message = duplicateCount > 0 
+      ? `${inserted.length} products imported, ${duplicateCount} duplicates skipped`
+      : `${inserted.length} products imported successfully`;
 
     res.status(201).json({
       success: true,
       count: inserted.length,
+      duplicates: duplicateCount,
+      total: withUser.length,
+      message,
       data: inserted,
     });
   } catch (err) {
-    if (err.code === 11000) {
-      return res.status(207).json({
-        success: true,
-        message: "Some duplicate products were skipped",
-      });
-    }
     next(err);
   }
 };

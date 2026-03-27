@@ -80,22 +80,28 @@ const Dashboard = () => {
   };
 
   const statCards = [
-    { title: "Total Revenue", value: `₹${Number(overview.totalRevenue || 0).toLocaleString()}`, icon: FiDollarSign, color: "text-emerald-600", bg: "bg-emerald-50", trend: "+12.5%", desc: "Gross Sales", path: "/transactions" },
-    { title: "Avg. Ticket", value: `₹${Number(overview.averageTransactionValue || 0).toFixed(2)}`, icon: FiActivity, color: "text-blue-600", bg: "bg-blue-50", trend: "+3.2%", desc: "Per Order", path: "/transactions" },
-    { title: "Total Orders", value: overview.totalTransactions || 0, icon: FiShoppingCart, color: "text-orange-600", bg: "bg-orange-50", trend: "+18%", desc: "Volume", path: "/transactions" },
-    { title: "Active Clients", value: overview.uniqueCustomers || 0, icon: FiUsers, color: "text-purple-600", bg: "bg-purple-50", trend: "+5.4%", desc: "Retention", path: "/customers" },
+    { title: "Total Sales", value: `₹${Number(overview.totalRevenue || 0).toLocaleString()}`, icon: FiDollarSign, color: "text-emerald-600", bg: "bg-emerald-50", trend: "+12.5%", desc: "Revenue Earned", path: "/transactions" },
+    { title: "Average Order", value: `₹${Number(overview.averageTransactionValue || 0).toFixed(2)}`, icon: FiActivity, color: "text-blue-600", bg: "bg-blue-50", trend: "+3.2%", desc: "Per Customer", path: "/transactions" },
+    { title: "Total Orders", value: overview.totalTransactions || 0, icon: FiShoppingCart, color: "text-orange-600", bg: "bg-orange-50", trend: "+18%", desc: "Completed", path: "/transactions" },
+    { title: "Customers", value: overview.uniqueCustomers || 0, icon: FiUsers, color: "text-purple-600", bg: "bg-purple-50", trend: "+5.4%", desc: "Active Buyers", path: "/customers" },
   ];
 
   const PIE_COLORS = ["#6366f1", "#818cf8", "#a5b4fc", "#c7d2fe", "#e0e7ff"];
 
   if (txLoading || dashLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600" />
-            <FiZap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-600 animate-pulse" size={24} />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <div className="relative mb-8">
+          <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-indigo-600" />
+          <FiZap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-indigo-600 animate-pulse" size={32} />
         </div>
-        <p className="mt-6 text-slate-500 font-black tracking-widest animate-pulse uppercase text-sm">Syncing Neural Data...</p>
+        <h3 className="text-2xl font-black text-slate-800 mb-2">Loading Your Dashboard...</h3>
+        <p className="text-slate-500 font-medium">Preparing your business insights</p>
+        <div className="mt-8 flex gap-2">
+          <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <div className="w-2 h-2 bg-pink-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
       </div>
     );
   }
@@ -112,21 +118,57 @@ const Dashboard = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-600"></span>
               </span>
-              Engine Active
+              Live Analytics
             </div>
-            <h1 className="text-5xl font-black text-slate-900 tracking-tight">Intelligence Dashboard</h1>
+            <h1 className="text-5xl font-black text-slate-900 tracking-tight">Business Dashboard</h1>
+            <p className="text-slate-500 mt-2 text-lg">Your complete business overview at a glance</p>
           </motion.div>
           
           <button 
             onClick={handleExportPDF}
-            className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 transition-all shadow-2xl shadow-indigo-200/50 font-black text-sm active:scale-95"
+            className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-2xl hover:shadow-2xl hover:shadow-indigo-300/50 transition-all font-black text-sm active:scale-95"
           >
             <FiDownload className="group-hover:translate-y-1 transition-transform" /> 
-            Generate Forensic PDF
+            Download Report (PDF)
           </button>
         </div>
 
         <div ref={reportRef} className="space-y-10 p-2">
+          
+          {/* Welcome Banner */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-3 bg-white/20 backdrop-blur-xl rounded-2xl">
+                  <FiTrendingUp size={28} />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black">Welcome Back! 👋</h2>
+                  <p className="text-white/80 text-sm mt-1">Here's what's happening with your business today</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                  <div className="text-white/60 text-xs font-bold uppercase mb-2">Quick Tip</div>
+                  <div className="text-lg font-bold">Check low stock alerts below to avoid running out of popular items</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                  <div className="text-white/60 text-xs font-bold uppercase mb-2">Pro Feature</div>
+                  <div className="text-lg font-bold">Use AI Recommendations to discover which products sell well together</div>
+                </div>
+                <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20">
+                  <div className="text-white/60 text-xs font-bold uppercase mb-2">Export Data</div>
+                  <div className="text-lg font-bold">Download your business report as PDF anytime using the button above</div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
           
           {/* KPI GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -162,8 +204,8 @@ const Dashboard = () => {
             <div className="xl:col-span-2 bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-100">
               <div className="flex items-center justify-between mb-10">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-800 tracking-tight">Revenue Trajectory</h3>
-                  <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Real-time sales velocity</p>
+                  <h3 className="text-2xl font-black text-slate-800 tracking-tight">Sales Over Time</h3>
+                  <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Daily revenue trends</p>
                 </div>
               </div>
               <div className="h-[380px] w-full">
@@ -189,8 +231,8 @@ const Dashboard = () => {
 
             {/* Demand Mix */}
             <div className="bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-100 flex flex-col">
-              <h3 className="text-2xl font-black text-slate-800 tracking-tight">Demand Mix</h3>
-              <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1 mb-10">Product split</p>
+              <h3 className="text-2xl font-black text-slate-800 tracking-tight">Product Categories</h3>
+              <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1 mb-10">Sales by category</p>
               <div className="h-[300px] w-full relative">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -234,9 +276,9 @@ const Dashboard = () => {
             <div className="bg-white p-10 rounded-[3rem] shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-100 flex flex-col min-h-[550px]">
               <div className="mb-10">
                 <h3 className="text-2xl font-black text-slate-800 flex items-center gap-3 tracking-tight">
-                   <FiBarChart2 className="text-indigo-600"/> Velocity Leaders
+                   <FiBarChart2 className="text-indigo-600"/> Best Selling Products
                 </h3>
-                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Movement ranking</p>
+                <p className="text-slate-400 font-bold text-xs uppercase tracking-widest mt-1">Top performers</p>
               </div>
               <div className="flex-1 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -264,9 +306,9 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="text-2xl font-black flex items-center gap-3 tracking-tight">
-                        <FiAlertCircle className="text-rose-500 animate-pulse"/> Depletion Monitor
+                        <FiAlertCircle className="text-rose-500 animate-pulse"/> Low Stock Alerts
                       </h3>
-                      <p className="text-slate-500 font-bold text-xs uppercase tracking-widest mt-1">Critical Restock Required</p>
+                      <p className="text-slate-500 font-bold text-xs uppercase tracking-widest mt-1">Products running out soon</p>
                     </div>
                   </div>
                </div>
@@ -278,7 +320,7 @@ const Dashboard = () => {
                   onClick={() => navigate('/inventory-logs')}
                   className="w-full flex items-center justify-center gap-3 px-8 py-5 bg-indigo-600 text-white rounded-[1.5rem] font-black text-sm hover:bg-indigo-500 transition-all shadow-2xl shadow-indigo-600/20 active:scale-95"
                 >
-                  <FiPackage /> Access Warehouse Ledger
+                  <FiPackage /> View Full Inventory
                 </button>
                </div>
             </div>

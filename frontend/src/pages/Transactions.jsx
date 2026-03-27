@@ -5,6 +5,7 @@ import {
   bulkUploadTransactions,
   deleteTransaction,
 } from "../redux/slices/transactionSlice";
+import * as XLSX from 'xlsx';
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -99,22 +100,76 @@ const Transactions = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const parsed = JSON.parse(event.target.result);
-        const txns = Array.isArray(parsed) ? parsed : (parsed.transactions || [parsed]);
-        if (!txns.length) throw new Error("Empty file");
+    const fileExtension = file.name.split('.').pop().toLowerCase();
 
-        await dispatch(bulkUploadTransactions(txns)).unwrap();
-        toast.success("Data synchronized successfully");
-        setShowUploadModal(false);
-        setCurrentPage(1);
-      } catch (err) {
-        toast.error("Invalid JSON format");
-      }
-    };
-    reader.readAsText(file);
+    if (fileExtension === 'json') {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          const txns = Array.isArray(parsed) ? parsed : (parsed.transactions || [parsed]);
+          if (!txns.length) throw new Error("Empty file");
+
+          await dispatch(bulkUploadTransactions(txns)).unwrap();
+          toast.success("Data synchronized successfully");
+          setShowUploadModal(false);
+          setCurrentPage(1);
+        } catch (err) {
+          toast.error("Invalid JSON format");
+        }
+      };
+      reader.readAsText(file);
+    } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const data = new Uint8Array(event.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+          const txns = jsonData.map(row => {
+            let items = [];
+            const itemsStr = row.items || row.Items || '';
+            
+            if (itemsStr) {
+              try {
+                items = JSON.parse(itemsStr);
+              } catch {
+                items = itemsStr.split(',').map(item => {
+                  const [productId, quantity] = item.trim().split(':');
+                  return {
+                    productId: productId?.trim(),
+                    quantity: Number(quantity) || 1
+                  };
+                }).filter(item => item.productId);
+              }
+            }
+
+            return {
+              transactionId: row.transactionId || row.TransactionID,
+              shopperId: row.shopperId || row.customerId || row.ShopperID,
+              items: items,
+              totalAmount: Number(row.totalAmount || row.TotalAmount || 0),
+              timestamp: row.timestamp || row.Date || new Date().toISOString()
+            };
+          });
+
+          await dispatch(bulkUploadTransactions(txns)).unwrap();
+          const successMsg = txns.length === 1 ? "Transaction recorded!" : `${txns.length} transactions uploaded from Excel`;
+          toast.success(successMsg);
+          setShowUploadModal(false);
+          setCurrentPage(1);
+        } catch (err) {
+          console.error('Excel import error:', err);
+          toast.error(err.message || err.warnings?.[0] || "Failed to parse Excel file. Make sure products exist in database first.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      toast.error('Please upload JSON or Excel file');
+    }
   };
 
   const handleDelete = async (id) => {
@@ -321,9 +376,9 @@ const Transactions = () => {
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="relative bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
               <h3 className="text-xl font-black text-gray-900 mb-6">Sync Transaction Data</h3>
               <div className="border-2 border-dashed border-gray-100 rounded-2xl p-8 text-center hover:border-indigo-200 transition-colors cursor-pointer relative">
-                <input type="file" accept=".json" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                <input type="file" accept=".json,.xlsx,.xls" onChange={handleFileUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
                 <FiFileText className="mx-auto text-gray-300 mb-2" size={32} />
-                <p className="text-xs font-bold text-gray-400 uppercase">Click to browse .json</p>
+                <p className="text-xs font-bold text-gray-400 uppercase">Click to browse JSON or Excel</p>
               </div>
             </motion.div>
           </div>
