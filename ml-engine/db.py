@@ -43,7 +43,7 @@ class Database:
                 print(f"Successfully connected to MongoDB: {DB_NAME}")
             except ConnectionFailure as e:
                 print(f"Could not connect to MongoDB: {e}")
-                sys.exit(1)
+                raise Exception(f"MongoDB connection failed: {e}")
         return cls._instance
 
 def get_db():
