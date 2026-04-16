@@ -102,6 +102,9 @@ const Transactions = () => {
 
     const fileExtension = file.name.split('.').pop().toLowerCase();
 
+    // Show loading toast
+    const loadingToast = toast.loading(`Processing ${file.name}...`);
+
     if (fileExtension === 'json') {
       const reader = new FileReader();
       reader.onload = async (event) => {
@@ -110,12 +113,15 @@ const Transactions = () => {
           const txns = Array.isArray(parsed) ? parsed : (parsed.transactions || [parsed]);
           if (!txns.length) throw new Error("Empty file");
 
+          toast.update(loadingToast, { render: `Uploading ${txns.length} transactions...`, type: 'info', isLoading: true });
+          
           await dispatch(bulkUploadTransactions(txns)).unwrap();
-          toast.success("Data synchronized successfully");
+          
+          toast.update(loadingToast, { render: 'Data synchronized successfully!', type: 'success', isLoading: false, autoClose: 3000 });
           setShowUploadModal(false);
           setCurrentPage(1);
         } catch (err) {
-          toast.error("Invalid JSON format");
+          toast.update(loadingToast, { render: err.message || 'Invalid JSON format', type: 'error', isLoading: false, autoClose: 3000 });
         }
       };
       reader.readAsText(file);
@@ -156,19 +162,21 @@ const Transactions = () => {
             };
           });
 
+          toast.update(loadingToast, { render: `Uploading ${txns.length} transactions...`, type: 'info', isLoading: true });
+          
           await dispatch(bulkUploadTransactions(txns)).unwrap();
-          const successMsg = txns.length === 1 ? "Transaction recorded!" : `${txns.length} transactions uploaded from Excel`;
-          toast.success(successMsg);
+          
+          toast.update(loadingToast, { render: `${txns.length} transactions uploaded successfully!`, type: 'success', isLoading: false, autoClose: 3000 });
           setShowUploadModal(false);
           setCurrentPage(1);
         } catch (err) {
           console.error('Excel import error:', err);
-          toast.error(err.message || err.warnings?.[0] || "Failed to parse Excel file. Make sure products exist in database first.");
+          toast.update(loadingToast, { render: err.message || 'Failed to parse Excel file', type: 'error', isLoading: false, autoClose: 3000 });
         }
       };
       reader.readAsArrayBuffer(file);
     } else {
-      toast.error('Please upload JSON or Excel file');
+      toast.update(loadingToast, { render: 'Please upload JSON or Excel file', type: 'error', isLoading: false, autoClose: 3000 });
     }
   };
 

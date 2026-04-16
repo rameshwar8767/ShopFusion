@@ -30,7 +30,7 @@ exports.getTransactions = async (req, res, next) => {
       }
     }
 
-    // Amount Logic - Added check for non-empty values
+    // Amount Logic
     if (minAmount !== undefined && minAmount !== "") {
       query.totalAmount = { ...query.totalAmount, $gte: Number(minAmount) };
     }
@@ -38,15 +38,18 @@ exports.getTransactions = async (req, res, next) => {
       query.totalAmount = { ...query.totalAmount, $lte: Number(maxAmount) };
     }
 
-    const numericPage = Math.max(1, Number(page)); // Ensure page is at least 1
-    const numericLimit = Math.min(100, Number(limit)); // Cap limit to 100 for safety
+    const numericPage = Math.max(1, Number(page));
+    const numericLimit = Math.min(100, Number(limit));
 
+    // Use lean() for faster queries and select only needed fields
     const [total, transactions] = await Promise.all([
       Transaction.countDocuments(query),
       Transaction.find(query)
+        .select('transactionId shopperId items totalAmount timestamp')
         .sort({ timestamp: -1 })
         .skip((numericPage - 1) * numericLimit)
         .limit(numericLimit)
+        .lean()
     ]);
 
     res.json({
@@ -210,9 +213,29 @@ exports.bulkUploadTransactions = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Invalid transactions array" });
     }
 
+    // Collect all unique product IDs first
+    const allProductIds = new Set();
+    transactions.forEach(t => {
+      t.items?.forEach(item => {
+        if (item.productId) allProductIds.add(item.productId);
+      });
+    });
+
+    // Fetch all products in ONE query
+    const products = await Product.find({ 
+      productId: { $in: Array.from(allProductIds) }, 
+      user: userId 
+    }).lean();
+
+    // Create a fast lookup map
+    const productMap = {};
+    products.forEach(p => {
+      productMap[p.productId] = p;
+    });
+
     const preparedTransactions = [];
     const logEntries = [];
-    const productUpdates = [];
+    const productUpdates = new Map();
     const warnings = [];
 
     for (const t of transactions) {
@@ -220,13 +243,11 @@ exports.bulkUploadTransactions = async (req, res, next) => {
       const processedItems = [];
 
       for (const item of t.items) {
-        const product = await Product.findOne({ productId: item.productId, user: userId });
+        const product = productMap[item.productId];
         
         if (product) {
-          const currentStock = Number(product.stock) || 0;
           const soldQty = Number(item.quantity) || 0;
-          const stockAfterCalc = Math.max(0, currentStock - soldQty);
-
+          
           processedItems.push({
             ...item,
             productRef: product._id,
@@ -235,12 +256,18 @@ exports.bulkUploadTransactions = async (req, res, next) => {
             quantity: soldQty 
           });
 
-          productUpdates.push({
-            updateOne: {
-              filter: { _id: product._id },
-              update: { $inc: { stock: -soldQty } }
-            }
-          });
+          // Accumulate stock changes
+          if (!productUpdates.has(product._id.toString())) {
+            productUpdates.set(product._id.toString(), {
+              _id: product._id,
+              stockChange: 0,
+              currentStock: product.stock
+            });
+          }
+          const updateInfo = productUpdates.get(product._id.toString());
+          updateInfo.stockChange -= soldQty;
+
+          const stockAfter = Math.max(0, product.stock + updateInfo.stockChange);
 
           logEntries.push({
             user: userId,
@@ -248,11 +275,11 @@ exports.bulkUploadTransactions = async (req, res, next) => {
             productId: product.productId,
             changeType: "SALE",
             quantityChanged: -soldQty,
-            stockAfter: stockAfterCalc, 
+            stockAfter: stockAfter, 
             note: `Bulk Upload: ${transactionId}`
           });
         } else {
-          warnings.push(`Product ${item.productId} not found in transaction ${transactionId}`);
+          warnings.push(`Product ${item.productId} not found`);
         }
       }
 
@@ -263,22 +290,35 @@ exports.bulkUploadTransactions = async (req, res, next) => {
           user: userId, 
           transactionId 
         });
-      } else {
-        warnings.push(`Transaction ${transactionId} skipped - no valid products found`);
       }
     }
 
-    if (preparedTransactions.length > 0) await Transaction.insertMany(preparedTransactions, { ordered: false });
-    if (productUpdates.length > 0) await Product.bulkWrite(productUpdates);
-    if (logEntries.length > 0) await InventoryLog.insertMany(logEntries);
+    // Batch operations
+    const bulkOps = [];
+    for (const [productId, updateInfo] of productUpdates) {
+      bulkOps.push({
+        updateOne: {
+          filter: { _id: updateInfo._id },
+          update: { $inc: { stock: updateInfo.stockChange } }
+        }
+      });
+    }
+
+    // Execute all operations in parallel
+    await Promise.all([
+      preparedTransactions.length > 0 ? Transaction.insertMany(preparedTransactions, { ordered: false }) : Promise.resolve(),
+      bulkOps.length > 0 ? Product.bulkWrite(bulkOps) : Promise.resolve(),
+      logEntries.length > 0 ? InventoryLog.insertMany(logEntries, { ordered: false }) : Promise.resolve()
+    ]);
 
     res.status(201).json({ 
       success: true, 
       count: preparedTransactions.length,
-      warnings: warnings.length > 0 ? warnings : undefined,
-      message: warnings.length > 0 ? `${preparedTransactions.length} transactions imported, ${warnings.length} items skipped` : undefined
+      warnings: warnings.length > 0 ? warnings.slice(0, 10) : undefined,
+      message: `${preparedTransactions.length} transactions imported successfully`
     });
   } catch (error) {
+    console.error('Bulk upload error:', error);
     next(error);
   }
 };

@@ -55,6 +55,8 @@ const transactionSchema = new mongoose.Schema({
 // Optimized for ML: Fetching all transactions for a specific retailer
 transactionSchema.index({ user: 1, timestamp: -1 });
 transactionSchema.index({ shopperId: 1 });
+transactionSchema.index({ user: 1, totalAmount: 1 }); // For amount filtering
+transactionSchema.index({ transactionId: 1 }); // For search
 // Prevent duplicate transaction entries
 transactionSchema.index({ user: 1, transactionId: 1 }, { unique: true });
 
