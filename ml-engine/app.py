@@ -20,8 +20,13 @@ from algorithms.collaborative_based import CollaborativeBasedEngine
 from fusion.recommender import ShopFusionRecommender
 
 app = FastAPI(title="ShopFusion ML Engine")
-db = get_db()
-
+# db = get_db()
+def get_services():
+    db = get_db()
+    hybrid = ShopFusionRecommender()
+    content = ContentBasedEngine()
+    collab = CollaborativeBasedEngine()
+    return db, hybrid, content, collab
 # Enable CORS for your Node.js frontend/backend
 app.add_middleware(
     CORSMiddleware,
@@ -31,13 +36,13 @@ app.add_middleware(
 )
 
 # Initialize Engine Singletons
-hybrid_recommender = ShopFusionRecommender()
-content_engine = ContentBasedEngine()
-collab_engine = CollaborativeBasedEngine()
+# hybrid_recommender = ShopFusionRecommender()
+# content_engine = ContentBasedEngine()
+# collab_engine = CollaborativeBasedEngine()
 
 @app.get("/")
 async def root():
-    return {"status": "online", "engine": "ShopFusion Hybrid ML", "version": "1.0.0"}
+    return {"status": "running 🚀"}
 
 @app.get("/health")
 async def health_check():
@@ -117,6 +122,7 @@ async def get_recommendations(user_id: str, cart_items: str = ""):
     """
     try:
         print(f"\n🎯 Generating recommendations for user: {user_id}")
+        db, hybrid_recommender, content_engine, collab_engine = get_services()
         
         # 1. Prepare Product Context
         product_map = get_product_map(user_id)
