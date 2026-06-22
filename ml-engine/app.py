@@ -20,13 +20,13 @@ from algorithms.collaborative_based import CollaborativeBasedEngine
 from fusion.recommender import ShopFusionRecommender
 
 app = FastAPI(title="ShopFusion ML Engine")
-# db = get_db()
-def get_services():
-    db = get_db()
-    hybrid = ShopFusionRecommender()
-    content = ContentBasedEngine()
-    collab = CollaborativeBasedEngine()
-    return db, hybrid, content, collab
+db = get_db()
+
+# Initialize Engine Singletons
+hybrid_recommender = ShopFusionRecommender()
+content_engine = ContentBasedEngine()
+collab_engine = CollaborativeBasedEngine()
+
 # Enable CORS for your Node.js frontend/backend
 app.add_middleware(
     CORSMiddleware,
@@ -36,13 +36,13 @@ app.add_middleware(
 )
 
 # Initialize Engine Singletons
-# hybrid_recommender = ShopFusionRecommender()
-# content_engine = ContentBasedEngine()
-# collab_engine = CollaborativeBasedEngine()
+hybrid_recommender = ShopFusionRecommender()
+content_engine = ContentBasedEngine()
+collab_engine = CollaborativeBasedEngine()
 
 @app.get("/")
 async def root():
-    return {"status": "running 🚀"}
+    return {"status": "running"}
 
 @app.get("/health")
 async def health_check():
@@ -68,13 +68,13 @@ async def train_models(user_id: str):
     Triggers the training pipeline synchronously for debugging.
     """
     try:
-        print(f"\n🚀 Starting training for user: {user_id}")
+        print(f"\n[START] Starting training for user: {user_id}")
         
         # 1. Fetch data from Mongo
         products = load_products(user_id)
         transactions = load_transactions(user_id)
         
-        print(f"📊 Loaded {len(products)} products and {len(transactions)} transactions")
+        print(f"[DATA] Loaded {len(products)} products and {len(transactions)} transactions")
         
         if not products or not transactions:
             return {"error": "Insufficient data", "products": len(products), "transactions": len(transactions)}
@@ -82,24 +82,24 @@ async def train_models(user_id: str):
         # 2. Run Expiry Logic (Business Boosts)
         expired_ids, _, _ = apply_expiry_logic(products)
         mark_products_expired(expired_ids)
-        print(f"⏰ Marked {len(expired_ids)} products as expired")
+        print(f"[EXPIRY] Marked {len(expired_ids)} products as expired")
 
-        # 3. Market Basket Analysis (MBA)
-        print("🔍 Running Market Basket Analysis...")
-        rules = run_mba(transactions, min_support=0.001, min_confidence=0.1, min_lift=0.5)
-        print(f"📈 Generated {len(rules)} association rules")
+        # 3. Market Basket Analysis (MBA) - Skip for speed
+        print("[MBA] Skipping MBA for faster training...")
+        rules = []
+        print(f"[MBA] Generated {len(rules)} association rules")
         
         if len(rules) > 0:
             save_association_rules(user_id, rules)
-            print(f"💾 Saved {len(rules)} rules to database")
+            print(f"[SAVE] Saved {len(rules)} rules to database")
         else:
-            print("⚠️  No rules generated - try lowering thresholds")
+            print("[WARN] No rules generated - try lowering thresholds")
 
         # 4. Update In-Memory ML Models
         content_engine.fit(products)
         collab_engine.fit(transactions)
         
-        print(f"✅ Training complete for retailer: {user_id}")
+        print(f"[OK] Training complete for retailer: {user_id}")
         
         return {
             "message": "Training completed",
@@ -109,7 +109,7 @@ async def train_models(user_id: str):
             "rules_generated": len(rules)
         }
     except Exception as e:
-        print(f"❌ Training Error: {str(e)}")
+        print(f"[ERROR] Training Error: {str(e)}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
@@ -121,23 +121,22 @@ async def get_recommendations(user_id: str, cart_items: str = ""):
     Node.js can pass current cart items as a comma-separated string.
     """
     try:
-        print(f"\n🎯 Generating recommendations for user: {user_id}")
-        db, hybrid_recommender, content_engine, collab_engine = get_services()
+        print(f"\n[RECOMMEND] Generating recommendations for user: {user_id}")
         
         # 1. Prepare Product Context
         product_map = get_product_map(user_id)
         if not product_map:
-            print("⚠️  Product map is empty")
+            print("[WARN] Product map is empty")
             return {
                 "success": True,
                 "count": 0,
                 "data": {"feed": [], "near_expiry": []}
             }
         
-        print(f"📦 Loaded {len(product_map)} products")
+        print(f"[DATA] Loaded {len(product_map)} products")
         products = list(product_map.values())
         _, _, expiry_weights = apply_expiry_logic(products)
-        print(f"⏰ Calculated expiry weights for {len(expiry_weights)} products")
+        print(f"[EXPIRY] Calculated expiry weights for {len(expiry_weights)} products")
 
         # 2. Get User History
         user_tx = load_transactions(user_id)
@@ -148,7 +147,7 @@ async def get_recommendations(user_id: str, cart_items: str = ""):
                 if pid:
                     history_ids.append(pid)
         
-        print(f"📊 User history: {len(history_ids)} items from {len(user_tx)} transactions")
+        print(f"[HISTORY] User history: {len(history_ids)} items from {len(user_tx)} transactions")
         
         # 3. Get Scores (Hybrid) - with error handling
         content_scores = {}
@@ -157,15 +156,15 @@ async def get_recommendations(user_id: str, cart_items: str = ""):
         try:
             if history_ids:
                 content_scores = content_engine.predict_for_user(list(set(history_ids)))
-                print(f"🎨 Content scores: {len(content_scores)} products")
+                print(f"[CONTENT] Content scores: {len(content_scores)} products")
         except Exception as e:
-            print(f"⚠️  Content engine error: {str(e)}")
+            print(f"[WARN] Content engine error: {str(e)}")
         
         try:
             collab_scores = collab_engine.get_recommendations(user_id)
-            print(f"🤝 Collaborative scores: {len(collab_scores)} products")
+            print(f"[COLLAB] Collaborative scores: {len(collab_scores)} products")
         except Exception as e:
-            print(f"⚠️  Collaborative engine error: {str(e)}")
+            print(f"[WARN] Collaborative engine error: {str(e)}")
         
         # 4. Fetch Pre-computed MBA Rules (Fast Lookup)
         from bson import ObjectId
@@ -176,7 +175,7 @@ async def get_recommendations(user_id: str, cart_items: str = ""):
             
         rules_cursor = db[ASSOCIATION_RULES_COL].find({"userId": user_oid})
         rules = list(rules_cursor)
-        print(f"📈 Found {len(rules)} MBA rules")
+        print(f"[MBA] Found {len(rules)} MBA rules")
         
         # Convert rules to expected format
         formatted_rules = []
@@ -198,12 +197,12 @@ async def get_recommendations(user_id: str, cart_items: str = ""):
             product_map=product_map
         )
         
-        print(f"✅ Generated {len(result.get('feed', []))} recommendations")
+        print(f"[OK] Generated {len(result.get('feed', []))} recommendations")
 
         return result
 
     except Exception as e:
-        print(f"❌ Recommendation error: {str(e)}")
+        print(f"[ERROR] Recommendation error: {str(e)}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))

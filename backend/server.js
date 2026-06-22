@@ -4,14 +4,16 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan"); // Added for request logging
 
-const connectDB = require("./config/db");
+const { connectDB, optimizeForBulkOps } = require("./config/mongoConfig");
 const errorHandler = require("./middleware/errorHandler");
 
 // Load env vars
 dotenv.config();
 
 // Connect DB
-connectDB();
+connectDB().then(() => {
+  optimizeForBulkOps();
+});
 
 const app = express();
 
@@ -52,6 +54,7 @@ app.use("/api/recommendations", require("./routes/recommendationRoutes"));
 app.use("/api/ml", require("./routes/mlRoutes"));
 
 app.use("/api/admin", require("./routes/adminRoutes"));
+app.use('/api/import', require('./routes/unlimitedImportRoutes'));
 
 // Health check
 app.get("/health", (req, res) => {
