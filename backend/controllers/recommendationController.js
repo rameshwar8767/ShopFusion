@@ -446,7 +446,7 @@ exports.getHybridRecommendations = async (req, res, next) => {
 };
 
 /**
- * @desc    Fetch Bundles (Pre-calculated MBA rules mapped to Product Names)
+ * @desc    Fetch Bundles (Pre-calculated MBA rules mapped to Product Pairs)
  * @route   GET /api/recommendations/bundles
  */
 exports.getProductBundles = async (req, res, next) => {
@@ -463,28 +463,33 @@ exports.getProductBundles = async (req, res, next) => {
     products.forEach((p) => { productMap[p.productId] = p; });
 
     const bundles = rules.map((rule) => {
-      // --- FIXED: Changed to plural 'antecedents' and 'consequents' ---
-      // We also add || [] as a safety net to prevent 'not iterable' errors
       const antecedentList = rule.antecedents || [];
       const consequentList = rule.consequents || [];
 
+      // Format individual product items safely
+      const formatProduct = (pid) => ({
+        productId: pid,
+        name: productMap[pid]?.name || `Product ${pid}`,
+        image: productMap[pid]?.image || null,
+        price: productMap[pid]?.price || null
+      });
+
       return {
         bundleId: rule._id,
-        items: [...antecedentList, ...consequentList].map((pid) => ({
-          productId: pid,
-          name: productMap[pid]?.name || `Product ${pid}`,
-          image: productMap[pid]?.image || null, // Helpful for the UI
-        })),
+        // Separate what the user buys vs what the system recommends
+        primaryItems: antecedentList.map(formatProduct),
+        recommendedItems: consequentList.map(formatProduct),
+        
+        // Real-world metrics
         confidence: rule.confidence,
         lift: rule.lift,
         support: rule.support,
-        uplift: rule.lift > 2 ? "High" : "Medium",
+        expectedUplift: rule.lift > 3 ? "Very High" : (rule.lift > 1.5 ? "High" : "Medium"),
       };
     });
 
-    res.json({ success: true, data: bundles });
+    res.json({ success: true, count: bundles.length, data: bundles });
   } catch (err) {
-    // This will now catch and pass errors to your errorHandler.js correctly
     next(err);
   }
 };
