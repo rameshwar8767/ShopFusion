@@ -15,7 +15,6 @@ const initialState = {
   message: "",
 };
 
-// ================= GENERATE MBA =================
 export const generateMBA = createAsyncThunk(
   "recommendations/generateMBA",
   async (params, thunkAPI) => {
@@ -30,7 +29,6 @@ export const generateMBA = createAsyncThunk(
   }
 );
 
-// ================= GET RULES =================
 export const getAssociationRules = createAsyncThunk(
   "recommendations/getRules",
   async (_, thunkAPI) => {
@@ -45,7 +43,6 @@ export const getAssociationRules = createAsyncThunk(
   }
 );
 
-// ================= GET BUNDLES =================
 export const getProductBundles = createAsyncThunk(
   "recommendations/getBundles",
   async (_, thunkAPI) => {
@@ -60,14 +57,11 @@ export const getProductBundles = createAsyncThunk(
   }
 );
 
-// ================= CROSS SELL =================
 export const getCrossSelling = createAsyncThunk(
   "recommendations/getCrossSell",
   async (productIds, thunkAPI) => {
     try {
-      const res = await api.post("/recommendations/cross-sell", {
-        productIds,
-      });
+      const res = await api.post("/recommendations/cross-sell", { productIds });
       return res.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -77,14 +71,11 @@ export const getCrossSelling = createAsyncThunk(
   }
 );
 
-// ================= INVENTORY =================
-// ================= INVENTORY =================
 export const getInventoryOptimization = createAsyncThunk(
   "recommendations/getInventory",
   async (_, thunkAPI) => {
     try {
-      // FIX: Changed from .post to .get to match backend router.get
-      const res = await api.get("/recommendations/inventory"); 
+      const res = await api.get("/recommendations/inventory");
       return res.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -94,7 +85,6 @@ export const getInventoryOptimization = createAsyncThunk(
   }
 );
 
-// ================= DASHBOARD =================
 export const getDashboard = createAsyncThunk(
   "recommendations/getDashboard",
   async (_, thunkAPI) => {
@@ -128,10 +118,9 @@ const recommendationSlice = createSlice({
         state.isError = false;
         state.isSuccess = false;
       })
-      .addCase(generateMBA.fulfilled, (state, action) => {
+      .addCase(generateMBA.fulfilled, (state) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.rules = action.payload?.data?.rules || [];
       })
       .addCase(generateMBA.rejected, (state, action) => {
         state.isLoading = false;
@@ -200,25 +189,16 @@ const recommendationSlice = createSlice({
         state.isLoading = true;
         state.isError = false;
       })
-.addCase(getDashboard.fulfilled, (state, action) => {
-  state.isLoading = false;
-  state.isSuccess = true;
-
-  const payload = action.payload?.data || {};
-  state.dashboard = payload;
-
-  // AGAR payload mein bundles/near_expiry hai tabhi update karo
-  // Warna purana data (jo individual API calls se aaya) rehne do
-  if (payload.near_expiry) {
-    state.inventory = payload.near_expiry;
-  }
-  
-  if (payload.bundles) {
-    state.bundles = payload.bundles;
-  }
-
-  console.log("Dashboard Updated with:", payload);
-})
+      .addCase(getDashboard.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        const payload = action.payload?.data || {};
+        state.dashboard = payload;
+        // Only update inventory from dashboard, never overwrite bundles
+        if (payload.near_expiry) {
+          state.inventory = payload.near_expiry;
+        }
+      })
       .addCase(getDashboard.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
