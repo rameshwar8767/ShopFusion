@@ -3,51 +3,62 @@ version: "3.9"
 services:
 
   frontend:
-    build:
-      context: ./frontend
+    image: ${DOCKER_USERNAME}/shopfusion-frontend:latest
     container_name: shopfusion-frontend
+    restart: always
+
     ports:
       - "3000:80"
+
     environment:
-      - VITE_API_URL=http://backend:5000
+      VITE_API_URL: http://backend:5000
+
     depends_on:
       - backend
+
     networks:
       - shopfusion-network
 
   backend:
-    build:
-      context: ./backend
+    image: ${DOCKER_USERNAME}/shopfusion-backend:latest
     container_name: shopfusion-backend
+    restart: always
+
     ports:
       - "5000:5000"
+
     environment:
-      NODE_ENV: development
-      PORT: 5000
-      MONGO_URI: mongodb+srv://ram:Pass1234@cluster0.2ycwei8.mongodb.net/shopfusion
-      JWT_SECRET: your_jwt_secret_key_here_make_it_strong
-      JWT_EXPIRE: 30d
-      MIN_SUPPORT: 0.01
-      MIN_CONFIDENCE: 0.3
-      MIN_LIFT: 1.0
-      PYTHON_API_URL: http://ml-engine:8000
-      USE_PYTHON_ENGINE: "false"
-      CLIENT_URL: http://localhost:3000
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
+      MONGO_URI: ${MONGO_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE: ${JWT_EXPIRE}
+      MIN_SUPPORT: ${MIN_SUPPORT}
+      MIN_CONFIDENCE: ${MIN_CONFIDENCE}
+      MIN_LIFT: ${MIN_LIFT}
+      PYTHON_API_URL: ${PYTHON_API_URL}
+      USE_PYTHON_ENGINE: ${USE_PYTHON_ENGINE}
+      CLIENT_URL: ${CLIENT_URL}
+
     depends_on:
       - ml-engine
+
     networks:
       - shopfusion-network
 
   ml-engine:
-    build:
-      context: ./ml-engine
+    image: ${DOCKER_USERNAME}/shopfusion-ml:latest
     container_name: shopfusion-ml
+    restart: always
+
     ports:
       - "8000:8000"
+
     environment:
-      MONGO_URI: mongodb+srv://ram:Pass1234@cluster0.2ycwei8.mongodb.net/shopfusion
+      MONGO_URI: ${MONGO_URI}
       DB_NAME: shopfusion
       PORT: 8000
+
     networks:
       - shopfusion-network
 
