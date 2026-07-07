@@ -1,88 +1,68 @@
-# 🚀 ShopFusion - Dockerized Hybrid Retail Analytics & Recommendation System
+# 🚀 ShopFusion – Hybrid Retail Analytics & Recommendation System
 
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue?logo=docker)
+![Jenkins](https://img.shields.io/badge/Jenkins-CI/CD-D24939?logo=jenkins)
 ![React](https://img.shields.io/badge/Frontend-React-61DAFB?logo=react)
 ![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=node.js)
 ![FastAPI](https://img.shields.io/badge/ML-FastAPI-009688?logo=fastapi)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb)
+![Nginx](https://img.shields.io/badge/Nginx-Reverse%20Proxy-009639?logo=nginx)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## 📖 Overview
 
-**ShopFusion** is a full-stack **Hybrid Retail Analytics & Product Recommendation System** designed to help retailers efficiently manage products, analyze customer purchasing behavior, and generate intelligent product recommendations using Machine Learning.
+ShopFusion is a full-stack hybrid retail analytics platform that enables retailers to manage inventory, analyze customer purchasing behavior, and generate intelligent product recommendations using machine learning.
 
-The application is fully **Dockerized** using a **Microservices Architecture** with **Multi-Stage Docker Builds**, enabling easy deployment, scalability, and consistent development across different environments.
+The project follows a microservices architecture with separate React, Node.js, and FastAPI services. It is fully containerized with Docker, orchestrated using Docker Compose, and supports CI/CD with Jenkins and Docker Hub.
 
 ---
 
 # ✨ Features
 
-- 📦 Unlimited Product & Transaction Import System
-- 🤖 Hybrid Recommendation Engine
-- 🛒 Market Basket Analysis
-- 📊 Retail Analytics Dashboard
-- 📈 Inventory & Product Management
-- 👥 Customer Management
-- 🔐 JWT Authentication
-- ⚡ High Performance REST APIs
-- 🐳 Fully Dockerized Microservices
-- 🚀 Multi-Stage Docker Builds
+- JWT Authentication & Authorization
+- Product, Category & Inventory Management
+- Customer & Transaction Management
+- Dashboard Analytics
+- Market Basket Analysis
+- Hybrid Recommendation Engine
+- FastAPI ML Service
+- REST APIs
+- Dockerized Microservices
+- Multi-stage Docker Builds
+- Jenkins CI/CD Pipeline
+- Docker Hub Image Publishing
 
 ---
 
-# 🏗️ System Architecture
+# 🏗 Architecture
 
-```
+```text
                    Browser
                       │
                       ▼
-          React Frontend (Nginx)
+             React + Nginx
                  Port 3000
                       │
                       ▼
-          Node.js + Express API
+             Node.js Express API
                  Port 5000
-             │                │
-             ▼                ▼
-      MongoDB Atlas     FastAPI ML Engine
-                             Port 8000
+              │              │
+              ▼              ▼
+      MongoDB Atlas     FastAPI ML
+                           Port 8000
 ```
 
 ---
 
-# 📂 Project Structure
+# 📁 Project Structure
 
-```
-ShopFusion
-│
-├── frontend
-│   ├── src
-│   ├── public
-│   ├── Dockerfile
-│   ├── package.json
-│   └── vite.config.js
-│
-├── backend
-│   ├── config
-│   ├── controllers
-│   ├── middleware
-│   ├── models
-│   ├── routes
-│   ├── scripts
-│   ├── Dockerfile
-│   ├── package.json
-│   └── server.js
-│
-├── ml-engine
-│   ├── algorithms
-│   ├── api
-│   ├── data
-│   ├── fusion
-│   ├── Dockerfile
-│   ├── app.py
-│   └── requirements.txt
-│
+```text
+ShopFusion/
+├── frontend/
+├── backend/
+├── ml-engine/
 ├── docker-compose.yml
+├── Jenkinsfile
 ├── README.md
 ├── products_dataset.xlsx
 └── transactions_dataset.xlsx
@@ -90,26 +70,21 @@ ShopFusion
 
 ---
 
-# 🛠️ Tech Stack
+# 🛠 Tech Stack
 
 ## Frontend
-
-- React.js
+- React
 - Vite
 - Tailwind CSS
 - Axios
 
 ## Backend
-
 - Node.js
 - Express.js
-- JWT Authentication
+- JWT
 - Mongoose
-- REST APIs
 
 ## Machine Learning
-
-- Python
 - FastAPI
 - Pandas
 - NumPy
@@ -117,155 +92,97 @@ ShopFusion
 - MLxtend
 
 ## Database
-
 - MongoDB Atlas
 
 ## DevOps
-
 - Docker
 - Docker Compose
+- Jenkins
+- Docker Hub
 - Nginx
-- Multi-Stage Docker Builds
-- Bridge Networking
+- GitHub
+- Multi-stage Docker Builds
 
 ---
 
-# 🐳 Docker Architecture
-
-| Service | Technology | Docker |
-|----------|------------|--------|
-| Frontend | React + Nginx | ✅ Multi-Stage |
-| Backend | Node.js + Express | ✅ Dockerized |
-| ML Engine | Python + FastAPI | ✅ Multi-Stage |
-| Database | MongoDB Atlas | Cloud Database |
-
----
-
-# 🚀 Multi-Stage Docker Builds
-
-## Frontend
-
-- Node.js Builder Image
-- Production Build using Vite
-- Nginx Runtime Image
-- Lightweight Production Container
-
----
-
-## Backend
-
-- Node.js Runtime
-- Production Dependencies
-- Environment Variables
-- REST API Service
-
----
-
-## ML Engine
-
-- Python Builder Stage
-- Dependency Installation
-- FastAPI Runtime
-- Optimized Production Image
-
----
-
-# 🌐 Services
+# 🐳 Docker Services
 
 | Service | Port |
 |----------|------|
 | Frontend | 3000 |
-| Backend API | 5000 |
-| FastAPI ML Engine | 8000 |
+| Backend | 5000 |
+| ML Engine | 8000 |
 
 ---
 
-# ⚙️ Environment Variables
+# ⚙ Environment Variables
 
-## Frontend
+## frontend/.env
 
 ```env
 VITE_API_URL=http://localhost:5000
 ```
 
----
-
-## Backend
+## backend/.env
 
 ```env
-NODE_ENV=development
 PORT=5000
-
-MONGO_URI=your_mongodb_connection_string
-
-JWT_SECRET=your_secret_key
+NODE_ENV=development
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_secret
 JWT_EXPIRE=30d
-
-MIN_SUPPORT=0.01
-MIN_CONFIDENCE=0.3
-MIN_LIFT=1.0
-
 PYTHON_API_URL=http://ml-engine:8000
-USE_PYTHON_ENGINE=false
-
 CLIENT_URL=http://localhost:3000
 ```
 
----
-
-## ML Engine
+## ml-engine/.env
 
 ```env
-MONGO_URI=your_mongodb_connection_string
-DB_NAME=shopfusion
 PORT=8000
+MONGO_URI=your_mongodb_uri
+DB_NAME=shopfusion
 ```
 
 ---
 
-# 🚀 Getting Started
-
-## 1️⃣ Clone Repository
+# 🚀 Local Setup
 
 ```bash
-git clone https://github.com/yourusername/shopfusion.git
+git clone https://github.com/rameshwar8767/ShopFusion.git
+cd ShopFusion
+```
 
-cd shopfusion
+Install dependencies
+
+```bash
+cd frontend && npm install
+cd ../backend && npm install
+cd ../ml-engine && pip install -r requirements.txt
 ```
 
 ---
 
-## 2️⃣ Build Docker Images
+# 🐳 Docker Setup
+
+Build images
 
 ```bash
 docker compose build
 ```
 
----
-
-## 3️⃣ Start All Containers
+Run
 
 ```bash
 docker compose up -d
 ```
 
-or
+Logs
 
 ```bash
-docker compose up --build
+docker compose logs -f
 ```
 
----
-
-## 4️⃣ Check Running Containers
-
-```bash
-docker ps
-```
-
----
-
-## 5️⃣ Stop Containers
+Stop
 
 ```bash
 docker compose down
@@ -273,117 +190,191 @@ docker compose down
 
 ---
 
-# 🌍 Application URLs
+# 🌐 URLs
 
-| Application | URL |
-|--------------|-----|
+| Service | URL |
+|---------|-----|
 | Frontend | http://localhost:3000 |
-| Backend API | http://localhost:5000 |
+| Backend | http://localhost:5000 |
 | FastAPI Docs | http://localhost:8000/docs |
 
 ---
 
-# 📊 Machine Learning Modules
+# 🔄 CI/CD Pipeline
+
+The project uses Jenkins for continuous integration and deployment.
+
+Pipeline stages:
+
+1. Checkout source code
+2. Install dependencies
+3. Build Docker images
+4. Login to Docker Hub
+5. Push images
+6. Deploy using Docker Compose
+
+Workflow
+
+```text
+Developer
+    │
+    ▼
+GitHub
+    │
+Webhook
+    ▼
+Jenkins
+    │
+Checkout
+    │
+Build
+    │
+Docker Build
+    │
+Docker Hub Push
+    │
+Deploy
+    ▼
+Production
+```
+
+---
+
+# 🔐 Jenkins Credentials
+
+Create the following credentials in Jenkins.
+
+| ID | Type |
+|----|------|
+| dockerhub | Username with Password |
+| github-token *(optional)* | Secret Text |
+
+Password should be your Docker Hub Personal Access Token.
+
+---
+
+# 📝 Example Jenkinsfile
+
+```groovy
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "your-dockerhub-username/shopfusion-backend"
+    }
+
+    stages {
+        stage('Checkout'){
+            steps{
+                checkout scm
+            }
+        }
+
+        stage('Build'){
+            steps{
+                sh 'docker compose build'
+            }
+        }
+
+        stage('Docker Login'){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
+                    sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
+                }
+            }
+        }
+
+        stage('Push'){
+            steps{
+                sh 'docker compose push'
+            }
+        }
+
+        stage('Deploy'){
+            steps{
+                sh 'docker compose up -d'
+            }
+        }
+    }
+}
+```
+
+---
+
+# 📦 Docker Hub
+
+Tag image
+
+```bash
+docker tag shopfusion-backend your-dockerhub-username/shopfusion-backend:latest
+```
+
+Push
+
+```bash
+docker push your-dockerhub-username/shopfusion-backend:latest
+```
+
+---
+
+# 📊 Machine Learning
 
 - Hybrid Recommendation System
 - Market Basket Analysis
 - Association Rule Mining
-- Product Recommendation
-- Customer Recommendation
 - Content-Based Filtering
 - Collaborative Filtering
 
 ---
 
-# 📦 APIs
+# 📡 REST APIs
 
 - Authentication
+- Users
 - Products
 - Categories
-- Transactions
 - Inventory
+- Transactions
+- Analytics
 - Recommendations
-- Dashboard Analytics
-- Unlimited Data Import
-
----
-
-# 🔥 Docker Commands
-
-## Build
-
-```bash
-docker compose build
-```
-
-## Run
-
-```bash
-docker compose up -d
-```
-
-## Stop
-
-```bash
-docker compose down
-```
-
-## View Logs
-
-```bash
-docker compose logs
-```
-
-## List Containers
-
-```bash
-docker ps
-```
-
-## Remove Containers
-
-```bash
-docker compose down --volumes
-```
 
 ---
 
 # 📈 Future Enhancements
 
-- ✅ GitHub Actions CI/CD
-- ✅ Jenkins Pipeline
-- ✅ AWS EC2 Deployment
-- ✅ Kubernetes Deployment
-- ✅ Helm Charts
-- ✅ Nginx Reverse Proxy
-- ✅ Prometheus & Grafana Monitoring
-- ✅ ELK Logging Stack
-- ✅ Docker Hub Image Publishing
+- Kubernetes Deployment
+- Helm Charts
+- AWS EC2 Deployment
+- Nginx Reverse Proxy
+- GitHub Actions
+- Prometheus Monitoring
+- Grafana Dashboards
+- ELK Stack Logging
+- SonarQube Code Analysis
+- Automated Testing
 
 ---
 
-# 👨‍💻 Author
+# 👨‍💻 Authors
 
-## Rameshwar Mane
-## Sakshi Hudge
-## Sarvesh Asawa
-## Omkar Kad
+- Rameshwar Mane
+- Sakshi Hudge
+- Sarvesh Asawa
+- Omkar Kad
 
 **Final-Year Information Technology Student (2026)**
 
 - MERN Stack Developer
 - DevOps Enthusiast
-- Machine Learning Enthusiast
 - AWS Certified Cloud Practitioner
+- Machine Learning Enthusiast
 
 ---
 
 # ⭐ Support
 
-If you found this project useful, please consider giving it a **⭐ Star** on GitHub.
+If you like this project, please give it a ⭐ on GitHub.
 
----
+# 📜 License
 
-## 📜 License
-
-This project is licensed under the **MIT License**.
+Licensed under the MIT License.
