@@ -9,7 +9,7 @@ pipeline {
 
     environment {
 
-        DOCKER_USERNAME = "rameshwar8767"
+        DOCKER_USERNAME = "rameshwarrm"
 
         FRONTEND_IMAGE = "${DOCKER_USERNAME}/shopfusion-frontend:latest"
 
