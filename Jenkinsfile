@@ -33,49 +33,11 @@ pipeline {
 
         }
 
-        stage('Build Frontend') {
+        
 
-            steps {
+        
 
-                dir('frontend') {
-
-                    sh 'npm install'
-
-                    sh 'npm run build'
-
-                }
-
-            }
-
-        }
-
-        stage('Install Backend Dependencies') {
-
-            steps {
-
-                dir('backend') {
-
-                    sh 'npm install'
-
-                }
-
-            }
-
-        }
-
-        stage('Build ML Engine') {
-
-            steps {
-
-                dir('ml-engine') {
-
-                    sh 'pip install -r requirements.txt'
-
-                }
-
-            }
-
-        }
+        
 
         stage('Build Docker Images') {
 
