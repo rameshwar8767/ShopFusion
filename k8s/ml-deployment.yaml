@@ -21,15 +21,15 @@ spec:
 
     spec:
       containers:
-        - name: ml-engine
-          image: rameshwarrm/shopfusion-ml-engine:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8000
+      - name: ml-engine
+        image: rameshwarrm/shopfusion-ml-engine:latest
 
-          envFrom:
+        ports:
+          - containerPort: 8000
+
+        envFrom:
           - configMapRef:
-            name: ml-config
+              name: ml-config
 
           - secretRef:
-            name: ml-secret
+              name: ml-secret

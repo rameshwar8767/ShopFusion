@@ -21,15 +21,15 @@ spec:
 
     spec:
       containers:
-        - name: backend
-          image: rameshwarrm/shopfusion-backend:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 5000
+      - name: backend
+        image: rameshwarrm/shopfusion-backend:latest
 
-          envFrom:
+        ports:
+          - containerPort: 5000
+
+        envFrom:
           - configMapRef:
-            name: backend-config
+              name: backend-config
 
           - secretRef:
-            name: backend-secret
+              name: backend-secret
